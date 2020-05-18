@@ -31,4 +31,4 @@ achFilesApi.getFiles().then(response => console.log(response.data));
 { files: [], error: null };
 ```
 
-See the [documentation](docs/index.html) for more detail.
+See the [generated documentation](https://routefusion.github.io/ach-node-sdk/docs/) for more detail.
