@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "typescript"
+  ],
+  "source": {
+    "includePattern": ".+\\.ts(doc|x)?$",
+    "excludePattern": ".+\\.(test|spec).ts"
+  }
+}
