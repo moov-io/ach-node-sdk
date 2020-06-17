@@ -1,13 +1,16 @@
 # ACH Node SDK
+
 Generated Typescript SDK for the [moov-io/ach](https://github.com/moov-io/ach) service.
 
 ## Installation
+
 Install in your Node.js or Typescript project using npm:
 ```bash
 npm install ach-node-sdk
 ```
 
 ## Usage
+
 Using `require` sytax:
 ```js
 const { ACHFilesApi, Configuration } = require('ach-node-sdk');
@@ -32,3 +35,11 @@ achFilesApi.getFiles().then(response => console.log(response.data));
 ```
 
 See the [generated documentation](https://moov-io.github.io/ach-node-sdk/docs/) for more detail.
+
+## Building Locally
+
+Run the following to build our library locally.
+
+```
+tsc --build tsconfig.json
+```
