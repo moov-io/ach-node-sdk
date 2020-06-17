@@ -43,3 +43,15 @@ Run the following to build our library locally.
 ```
 tsc --build tsconfig.json
 ```
+
+## Generating Docs
+
+Run the following for generating the documentation.
+
+```
+# Install typedoc if needed
+npm install -g typedoc
+
+# Generate the documentation
+typedoc --out docs/ *.ts
+```
