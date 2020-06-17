@@ -12,7 +12,7 @@
     "node",
     "sdk"
   ],
-  "author": "Ben Bean",
+  "author": "Moov Inc",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
