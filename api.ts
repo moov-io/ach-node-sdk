@@ -919,6 +919,12 @@ export interface BatchHeader {
      */
     companyDiscretionaryData?: string;
     /**
+     * Alphanumeric code used to identify an Originator The Company Identification Field must be included on all prenotification records and on each entry initiated pursuant to such prenotification. The Company ID may begin with the ANSI one-digit Identification Code Designator (ICD), followed by the identification number The ANSI Identification Numbers and related Identification Code IRS Employer Identification Number (EIN) \"1\" Data Universal Numbering Systems (DUNS) \"3\" User Assigned Number \"9\" 
+     * @type {string}
+     * @memberof BatchHeader
+     */
+    companyIdentification: string;
+    /**
      * Identifies the payment type (product) found within an ACH batch-using a 3-character code.
      * @type {string}
      * @memberof BatchHeader
@@ -956,10 +962,10 @@ export interface BatchHeader {
     ODFIIdentification: string;
     /**
      * BatchNumber is assigned in ascending sequence to each batch by the ODFI or its Sending Point in a given file of entries. Since the batch number in the Batch Header Record and the Batch Control Record is the same, the ascending sequence number should be assigned by batch and not by record. 
-     * @type {string}
+     * @type {number}
      * @memberof BatchHeader
      */
-    batchNumber?: string;
+    batchNumber?: number;
 }
 /**
  * 
@@ -1078,10 +1084,10 @@ export interface EntryDetail {
     addendaRecordIndicator?: number;
     /**
      * TraceNumber assigned by the ODFI in ascending sequence, is included in each Entry Detail Record, Corporate Entry Detail Record, and addenda Record. Trace Numbers uniquely identify each entry within a batch in an ACH input file. In association with the Batch Number, transmission (File Creation) Date, and File ID Modifier, the Trace Number uniquely identifies an entry within a given file. For addenda Records, the Trace Number will be identical to the Trace Number in the associated Entry Detail Record, since the Trace Number is associated with an entry or item rather than a physical record. 
-     * @type {number}
+     * @type {string}
      * @memberof EntryDetail
      */
-    traceNumber?: number;
+    traceNumber?: string;
     /**
      * 
      * @type {Addenda02}
@@ -1762,16 +1768,16 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
-         * @param {CreateFile} createFile Content of the ACH file (in json or raw text)
+         * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (createFile: CreateFile, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
-            // verify required parameter 'createFile' is not null or undefined
-            if (createFile === null || createFile === undefined) {
-                throw new RequiredError('createFile','Required parameter createFile was null or undefined when calling createFile.');
+        createFile: async (body: string, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'body' is not null or undefined
+            if (body === null || body === undefined) {
+                throw new RequiredError('body','Required parameter body was null or undefined when calling createFile.');
             }
             const localVarPath = `/files/create`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
@@ -1793,15 +1799,15 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Content-Type'] = 'text/plain';
 
             localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
             // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
             delete localVarUrlObj.search;
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof createFile !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(createFile !== undefined ? createFile : {}) : (createFile || "");
+            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
 
             return {
                 url: globalImportUrl.format(localVarUrlObj),
@@ -2313,14 +2319,14 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
-         * @param {CreateFile} createFile Content of the ACH file (in json or raw text)
+         * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(createFile: CreateFile, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).createFile(createFile, xRequestID, xIdempotencyKey, options);
+        async createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
+            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).createFile(body, xRequestID, xIdempotencyKey, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -2529,14 +2535,14 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
-         * @param {CreateFile} createFile Content of the ACH file (in json or raw text)
+         * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(createFile: CreateFile, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FileID> {
-            return ACHFilesApiFp(configuration).createFile(createFile, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+        createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FileID> {
+            return ACHFilesApiFp(configuration).createFile(body, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
@@ -2702,15 +2708,15 @@ export class ACHFilesApi extends BaseAPI {
     /**
      * Create a new File object from either the plaintext or JSON representation.
      * @summary Create File
-     * @param {CreateFile} createFile Content of the ACH file (in json or raw text)
+     * @param {string} body Content of the ACH file (in json or raw text)
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
      * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(createFile: CreateFile, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
-        return ACHFilesApiFp(this.configuration).createFile(createFile, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
+    public createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
+        return ACHFilesApiFp(this.configuration).createFile(body, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
