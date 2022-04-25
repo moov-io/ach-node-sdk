@@ -15,7 +15,7 @@
   "author": "Moov Inc",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.26.0",
+    "axios": "^0.27.0",
     "tslib": "^2.3.0",
     "url": "^0.11.0"
   },
