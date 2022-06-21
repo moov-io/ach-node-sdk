@@ -1,7 +1,8 @@
-// tslint:disable
+/* tslint:disable */
+/* eslint-disable */
 /**
  * ACH API
- * Moov ACH ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House)) implements an HTTP API for creating, parsing and validating ACH files. ACH is the primary method of electronic money movement throughout the United States.
+ * Moov ACH ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House)) implements an HTTP API for creating, parsing, and validating ACH files. ACH is the primary method of electronic money movement throughout the United States.
  *
  * The version of the OpenAPI document: v1
  * 
@@ -15,7 +16,7 @@
 import { Configuration } from "./configuration";
 // Some imports not used depending on template conditions
 // @ts-ignore
-import globalAxios, { AxiosPromise, AxiosInstance } from 'axios';
+import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export const BASE_PATH = "http://localhost:8080".replace(/\/+$/, "");
 
@@ -37,7 +38,7 @@ export const COLLECTION_FORMATS = {
  */
 export interface RequestArgs {
     url: string;
-    options: any;
+    options: AxiosRequestConfig;
 }
 
 /**

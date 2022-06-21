@@ -1,7 +1,8 @@
-// tslint:disable
+/* tslint:disable */
+/* eslint-disable */
 /**
  * ACH API
- * Moov ACH ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House)) implements an HTTP API for creating, parsing and validating ACH files. ACH is the primary method of electronic money movement throughout the United States.
+ * Moov ACH ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House)) implements an HTTP API for creating, parsing, and validating ACH files. ACH is the primary method of electronic money movement throughout the United States.
  *
  * The version of the OpenAPI document: v1
  * 
@@ -12,10 +13,11 @@
  */
 
 
-import * as globalImportUrl from 'url';
 import { Configuration } from './configuration';
-import globalAxios, { AxiosPromise, AxiosInstance } from 'axios';
+import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 // Some imports not used depending on template conditions
+// @ts-ignore
+import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
 
@@ -30,55 +32,55 @@ export interface ADVBatchControl {
      * @type {string}
      * @memberof ADVBatchControl
      */
-    ID?: string;
+    'ID'?: string;
     /**
      * Same as ServiceClassCode in BatchHeader record
      * @type {number}
      * @memberof ADVBatchControl
      */
-    serviceClassCode?: number;
+    'serviceClassCode': number;
     /**
      * EntryAddendaCount is a tally of each Entry Detail Record and each Addenda Record processed, within either the batch or file as appropriate.
      * @type {number}
      * @memberof ADVBatchControl
      */
-    entryAddendaCount?: number;
+    'entryAddendaCount': number;
     /**
      * Validate the Receiving DFI Identification in each Entry Detail Record is hashed to provide a check against inadvertent alteration of data contents due to hardware failure or program error. In this context the Entry Hash is the sum of the corresponding fields in the Entry Detail Records on the file. 
      * @type {number}
      * @memberof ADVBatchControl
      */
-    entryHash?: number;
+    'entryHash': number;
     /**
      * Contains accumulated Entry debit totals within the batch.
      * @type {number}
      * @memberof ADVBatchControl
      */
-    totalDebit?: number;
+    'totalDebit': number;
     /**
      * Contains accumulated Entry credit totals within the batch.
      * @type {number}
      * @memberof ADVBatchControl
      */
-    totalCredit?: number;
+    'totalCredit': number;
     /**
      * Alphanumeric code used to identify an ACH Operator
      * @type {string}
      * @memberof ADVBatchControl
      */
-    achOperatorData?: string;
+    'achOperatorData': string;
     /**
      * The routing number is used to identify the DFI originating entries within a given branch.
      * @type {string}
      * @memberof ADVBatchControl
      */
-    ODFIIdentification?: string;
+    'ODFIIdentification': string;
     /**
      * BatchNumber is assigned in ascending sequence to each batch by the ODFI or its Sending Point in a given file of entries. Since the batch number in the Batch Header Record and the Batch Control Record is the same, the ascending sequence number should be assigned by batch and not by record.
-     * @type {string}
+     * @type {number}
      * @memberof ADVBatchControl
      */
-    batchNumber?: string;
+    'batchNumber': number;
 }
 /**
  * 
@@ -91,103 +93,152 @@ export interface ADVEntryDetail {
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    ID?: string;
+    'ID'?: string;
     /**
-     * TransactionCode representing Accounting Entries Credit for ACH debits originated - 81 Debit for ACH credits originated - 82 Credit for ACH credits received 83 Debit for ACH debits received 84 Credit for ACH credits in rejected batches 85 Debit for ACH debits in rejected batches - 86 Summary credit for respondent ACH activity - 87 Summary debit for respondent ACH activity - 88 
+     * TransactionCode representing Accounting Entries: 81 - Credit for ACH debits originated | 82 - Debit for ACH credits originated | 83 - Credit for ACH credits received | 84 - Debit for ACH debits received | 85 - Credit for ACH credits in rejected batches | 86 - Debit for ACH debits in rejected batches | 87 - Summary credit for respondent ACH activity | 88 - Summary debit for respondent ACH activity 
      * @type {number}
      * @memberof ADVEntryDetail
      */
-    transactionCode: number;
+    'transactionCode': number;
     /**
      * RDFI\'s routing number without the last digit.
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    RDFIIdentification: string;
+    'RDFIIdentification': string;
     /**
      * Last digit in RDFI routing number.
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    checkDigit: string;
+    'checkDigit': string;
     /**
-     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so its space padded, no zero padded 
+     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so it\'s space padded, not zero padded 
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    DFIAccountNumber: string;
+    'DFIAccountNumber': string;
     /**
      * Number of cents you are debiting/crediting this account
      * @type {number}
      * @memberof ADVEntryDetail
      */
-    amount: number;
+    'amount': number;
     /**
      * Suggested routing number to use
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    adviceRoutingNumber?: string;
+    'adviceRoutingNumber': string;
     /**
      * Unique identifier for the File
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    fileIdentification?: string;
+    'fileIdentification'?: string;
     /**
      * Information related to the ACH opreator
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    achOperatorData?: string;
+    'achOperatorData'?: string;
     /**
      * The name of the receiver, usually the name on the bank account
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    individualName: string;
+    'individualName': string;
     /**
-     * DiscretionaryData allows ODFIs to include codes, of significance only to them, to enable specialized handling of the entry. There will be no standardized interpretation for the value of this field. It can either be a single two-character code, or two distinct one-character codes, according to the needs of the ODFI and/or Originator involved. This field must be returned intact for any returned entry. WEB uses the Discretionary Data Field as the Payment Type Code 
+     * DiscretionaryData allows ODFIs to include codes, of significance only to them, to enable specialized handling of the entry. There will be no standardized interpretation for the value of this field. It can either be a single two-character code, or two distinct one-character codes, according to the needs of the ODFI and/or Originator involved. This field must be returned intact for any returned entry. WEB uses the Discretionary Data Field as the Payment Type Code. 
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    discretionaryData?: string;
+    'discretionaryData'?: string;
     /**
-     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one ore more addenda records follow, and \"0\" means no such record is present. 
+     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one or more addenda records follow, and \"0\" means no such record is present. 
      * @type {number}
      * @memberof ADVEntryDetail
      */
-    addendaRecordIndicator?: number;
+    'addendaRecordIndicator'?: number;
     /**
-     * Routing number for ACH operator
+     * Routing number for ACH Operator
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    achOperatorRoutingNumber?: string;
+    'achOperatorRoutingNumber': string;
     /**
      * Julian Day of the year
      * @type {number}
      * @memberof ADVEntryDetail
      */
-    julianDay?: number;
+    'julianDay'?: number;
     /**
-     * SequenceNumber is consecutively assigned to each Addenda05 Record following an Entry Detail Record. The first addenda05 sequence number must always be a 1.
+     * SequenceNumber is consecutively assigned to each Addenda05 Record following an Entry Detail Record. The first Addenda05 sequence number must always be a 1.
      * @type {number}
      * @memberof ADVEntryDetail
      */
-    sequenceNumber?: number;
+    'sequenceNumber': number;
     /**
-     * Addenda99 record for the Entry Detail
+     * Addenda99 record for the ADV Entry Detail
      * @type {Array<Addenda99>}
      * @memberof ADVEntryDetail
      */
-    addenda99?: Array<Addenda99>;
+    'addenda99'?: Array<Addenda99>;
     /**
      * Category defines if the entry is a Forward, Return, or NOC
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    category?: string;
+    'category'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ADVFileControl
+ */
+export interface ADVFileControl {
+    /**
+     * ADV File Control Record
+     * @type {string}
+     * @memberof ADVFileControl
+     */
+    'ID': string;
+    /**
+     * Count of Batches in the File
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'batchCount': number;
+    /**
+     * Total number of records in the file (include all headers and trailer) divided by 10 (This number must be evenly divisible by 10. If not, additional records consisting of all 9\'s are added to the file after the initial \'9\' record to fill out the block 10.) 
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'blockCount': number;
+    /**
+     * Total detail and addenda records in the file
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'entryAddendaCount': number;
+    /**
+     * Calculated in the same manner as the batch total but includes total from entire file
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'entryHash': number;
+    /**
+     * Accumulated Batch debit totals within the file.
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'totalDebit': number;
+    /**
+     * Accumulated Batch credit totals within the file.
+     * @type {number}
+     * @memberof ADVFileControl
+     */
+    'totalCredit': number;
 }
 /**
  * 
@@ -196,77 +247,77 @@ export interface ADVEntryDetail {
  */
 export interface Addenda02 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda02
      */
-    id?: string;
+    'id'?: string;
     /**
      * 02 - NACHA regulations
      * @type {string}
      * @memberof Addenda02
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * ReferenceInformationOne may be used for additional reference numbers, identification numbers, or codes that the merchant needs to identify the particular transaction or customer. 
      * @type {string}
      * @memberof Addenda02
      */
-    referenceInformationOne?: string;
+    'referenceInformationOne'?: string;
     /**
-     * ReferenceInformationTwo  may be used for additional reference numbers, identification numbers, or codes that the merchant needs to identify the particular transaction or customer. 
+     * ReferenceInformationTwo may be used for additional reference numbers, identification numbers, or codes that the merchant needs to identify the particular transaction or customer. 
      * @type {string}
      * @memberof Addenda02
      */
-    referenceInformationTwo?: string;
+    'referenceInformationTwo'?: string;
     /**
      * TerminalIdentificationCode identifies an Electronic terminal with a unique code that allows a terminal owner and/or switching network to identify the terminal at which an Entry originated. 
      * @type {string}
      * @memberof Addenda02
      */
-    terminalIdentificationCode?: string;
+    'terminalIdentificationCode': string;
     /**
      * TransactionSerialNumber is assigned by the terminal at the time the transaction is originated.  The number, with the Terminal Identification Code, serves as an audit trail for the transaction and is usually assigned in ascending sequence. 
      * @type {string}
      * @memberof Addenda02
      */
-    transactionSerialNumber?: string;
+    'transactionSerialNumber': string;
     /**
-     * MMDD formatted timestamp identifies the date on which the transaction occurred.
+     * Timestamp identifies the date on which the transaction occurred. (Format MMDD - M=Month, D=Day)
      * @type {string}
      * @memberof Addenda02
      */
-    transactionDate?: string;
+    'transactionDate': string;
     /**
      * Indicates the code that a card authorization center has furnished to the merchant.
      * @type {string}
      * @memberof Addenda02
      */
-    authorizationCodeOrExpireDate?: string;
+    'authorizationCodeOrExpireDate'?: string;
     /**
      * Identifies the specific location of a terminal (i.e., street names of an intersection, address, etc.) in accordance with the requirements of Regulation E.
      * @type {string}
      * @memberof Addenda02
      */
-    terminalLocation?: string;
+    'terminalLocation': string;
     /**
      * Identifies the city in which the electronic terminal is located.
      * @type {string}
      * @memberof Addenda02
      */
-    terminalCity?: string;
+    'terminalCity': string;
     /**
-     * Identifies the state in which the electronic terminal is located
+     * Identifies the state in which the electronic terminal is located.
      * @type {string}
      * @memberof Addenda02
      */
-    terminalState?: string;
+    'terminalState': string;
     /**
      * Entry Detail Trace Number
      * @type {string}
      * @memberof Addenda02
      */
-    traceNumber?: string;
+    'traceNumber'?: string;
 }
 /**
  * 
@@ -275,35 +326,35 @@ export interface Addenda02 {
  */
 export interface Addenda05 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda05
      */
-    id?: string;
+    'id'?: string;
     /**
      * 05 - NACHA regulations
      * @type {string}
      * @memberof Addenda05
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Text for describing the related payment
      * @type {string}
      * @memberof Addenda05
      */
-    paymentRelatedInformation?: string;
+    'paymentRelatedInformation': string;
     /**
-     * SequenceNumber is consecutively assigned to each Addenda05 Record following an Entry Detail Record. The first addenda05 sequence number must always be a 1.
+     * SequenceNumber is consecutively assigned to each Addenda05 Record following an Entry Detail Record. The first Addenda05 sequence number must always be a 1.
      * @type {number}
      * @memberof Addenda05
      */
-    sequenceNumber?: number;
+    'sequenceNumber': number;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda05
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -312,47 +363,47 @@ export interface Addenda05 {
  */
 export interface Addenda10 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda10
      */
-    id?: string;
+    'id'?: string;
     /**
      * 10 - NACHA regulations
      * @type {string}
      * @memberof Addenda10
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
-     * Transaction Type Code Describes the type of payment ANN = Annuity BUS = Business/Commercial DEP = Deposit LOA = Loan MIS = Miscellaneous MOR = Mortgage PEN = Pension RLS = Rent/Lease REM = Remittance2 SAL = Salary/Payroll TAX = Tax TEL = Telephone-Initiated Transaction WEB = Internet-Initiated Transaction ARC = Accounts Receivable Entry BOC = Back Office Conversion Entry POP = Point of Purchase Entry RCK = Re-presented Check Entry 
+     * Describes the type of payment: \'ANN\' = Annuity | \'BUS\' = Business/Commercial | \'DEP\' = Deposit | \'LOA\' = Loan | \'MIS\' = Miscellaneous | \'MOR\' = Mortgage | \'PEN\' = Pension | \'RLS\' = Rent/Lease | \'REM\' = Remittance2 | \'SAL\' = Salary/Payroll | \'TAX\' = Tax | \'TEL\' = Telephone-Initiated Transaction | \'WEB\' = Internet-Initiated Transaction | \'ARC\' = Accounts Receivable Entry | \'BOC\' = Back Office Conversion Entry | \'POP\' = Point of Purchase Entry | \'RCK\' = Re-presented Check Entry 
      * @type {string}
      * @memberof Addenda10
      */
-    transactionTypeCode?: string;
+    'transactionTypeCode'?: string;
     /**
      * For inbound IAT payments this field should contain the USD amount or may be blank.
      * @type {number}
      * @memberof Addenda10
      */
-    foreignPaymentAmount?: number;
+    'foreignPaymentAmount': number;
     /**
      * Trace number
      * @type {string}
      * @memberof Addenda10
      */
-    foreignTraceNumber?: string;
+    'foreignTraceNumber'?: string;
     /**
      * Receiving Company Name/Individual Name
      * @type {string}
      * @memberof Addenda10
      */
-    name?: string;
+    'name': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda10
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -361,35 +412,35 @@ export interface Addenda10 {
  */
 export interface Addenda11 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda11
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 11 - NACHA regulations
      * @type {string}
      * @memberof Addenda11
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
-     * Originators name (your company name / name)
+     * Originator\'s name (your company name / name)
      * @type {string}
      * @memberof Addenda11
      */
-    originatorName?: string;
+    'originatorName': string;
     /**
-     * Originators street address
+     * Originator\'s street address
      * @type {string}
      * @memberof Addenda11
      */
-    originatorStreetAddress?: string;
+    'originatorStreetAddress': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda11
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -398,35 +449,35 @@ export interface Addenda11 {
  */
 export interface Addenda12 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda12
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 12 - NACHA regulations
      * @type {string}
      * @memberof Addenda12
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
-     * Originator City & State / Province Data elements City and State / Province  should be separated with an asterisk (*) as a delimiter and the field should end with a backslash (\\). 
+     * Originator City & State / Province Data elements City and State / Province  should be separated with an asterisk (*) as a delimiter and the field should end with a backslash (\\\\). 
      * @type {string}
      * @memberof Addenda12
      */
-    originatorCityStateProvince?: string;
+    'originatorCityStateProvince': string;
     /**
-     * Originator Country & Postal Code Data elements must be separated by an asterisk (*) and must end with a backslash (\\) 
+     * Originator Country & Postal Code Data elements must be separated by an asterisk (*) and must end with a backslash (\\\\). 
      * @type {string}
      * @memberof Addenda12
      */
-    originatorCountryPostalCode?: string;
+    'originatorCountryPostalCode': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda12
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -435,41 +486,41 @@ export interface Addenda12 {
  */
 export interface Addenda13 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda13
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 13 - NACHA regulations
      * @type {string}
      * @memberof Addenda13
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Originating DFI Name For Outbound IAT Entries, this field must contain the name of the U.S. ODFI. For Inbound IATs: Name of the foreign bank providing funding for the payment transaction 
      * @type {string}
      * @memberof Addenda13
      */
-    ODFIName?: string;
+    'ODFIName': string;
     /**
-     * Originating DFI Identification Number Qualifier For Inbound IATs: The 2-digit code that identifies the numbering scheme used in the Foreign DFI Identification Number field 01 = National Clearing System 02 = BIC Code 03 = IBAN Code 
+     * Originating DFI Identification Number Qualifier. For Inbound IATs: The 2-digit code that identifies the numbering scheme used in the Foreign DFI Identification Number field: \'01\' = National Clearing System | \'02\' = BIC Code | \'03\' = IBAN Code 
      * @type {string}
      * @memberof Addenda13
      */
-    ODFIIDNumberQualifier?: string;
+    'ODFIIDNumberQualifier': string;
     /**
-     * Originating DFI Branch Country Code USb = United States //(\"b\" indicates a blank space) For Inbound IATs: This 3 position field contains a 2-character code as approved by the International Organization for Standardization (ISO) used to identify the country in which the branch of the bank that originated the entry is located. Values for other countries can be found on the International Organization for Standardization website: www.iso.org. 
+     * Originating DFI Branch Country Code: USb = United States //(\"b\" indicates a blank space) For Inbound IATs: This 3 position field contains a 2-character code as approved by the International Organization for Standardization (ISO) used to identify the country in which the branch of the bank that originated the entry is located. Values for other countries can be found on the International Organization for Standardization website: www.iso.org. 
      * @type {string}
      * @memberof Addenda13
      */
-    ODFIBranchCountryCode?: string;
+    'ODFIBranchCountryCode': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda13
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -478,47 +529,47 @@ export interface Addenda13 {
  */
 export interface Addenda14 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda14
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 14 - NACHA regulations
      * @type {string}
      * @memberof Addenda14
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Name of the Receiver bank
      * @type {string}
      * @memberof Addenda14
      */
-    RDFIName?: string;
+    'RDFIName': string;
     /**
-     * Receiving DFI Identification Number Qualifier The 2-digit code that identifies the numbering scheme used in the Receiving DFI Identification Number field 01 = National Clearing System 02 = BIC Code 03 = IBAN Code 
+     * Receiving DFI Identification Number Qualifier. The 2-digit code that identifies the numbering scheme used in the Receiving DFI Identification Number field: \'01\' = National Clearing System | \'02\' = BIC Code | \'03\' = IBAN Code 
      * @type {string}
      * @memberof Addenda14
      */
-    RDFIIDNumberQualifier?: string;
+    'RDFIIDNumberQualifier': string;
     /**
      * This field contains the bank identification number of the DFI at which the Receiver maintains his account.
      * @type {string}
      * @memberof Addenda14
      */
-    RDFIIdentification?: string;
+    'RDFIIdentification': string;
     /**
      * Receiving DFI Branch Country Code USb\" = United States (\"b\" indicates a blank space) This 3 position field contains a 2-character code as approved by the International Organization for Standardization (ISO) used to identify the country in which the branch of the bank that receives the entry is located. Values for other countries can be found on the International Organization for Standardization website: www.iso.org 
      * @type {string}
      * @memberof Addenda14
      */
-    RDFIBranchCountryCode?: string;
+    'RDFIBranchCountryCode': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda14
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -527,35 +578,35 @@ export interface Addenda14 {
  */
 export interface Addenda15 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda15
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 15 - NACHA regulations
      * @type {string}
      * @memberof Addenda15
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Receiver Identification Number contains the accounting number by which the Originator is known to the Receiver for descriptive purposes. NACHA Rules recommend but do not require the RDFI to print the contents of this field on the receiver\'s statement. 
      * @type {string}
      * @memberof Addenda15
      */
-    receiverIDNumber?: string;
+    'receiverIDNumber'?: string;
     /**
      * Receiver\'s physical address
      * @type {string}
      * @memberof Addenda15
      */
-    receiverStreetAddress?: string;
+    'receiverStreetAddress': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda15
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -564,35 +615,35 @@ export interface Addenda15 {
  */
 export interface Addenda16 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda16
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 16 - NACHA regulations
      * @type {string}
      * @memberof Addenda16
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
-     * Receiver City & State / Province Data elements City and State / Province  should be separated with an asterisk (*) as a delimiter and the field should end with a backslash (\\). 
+     * Receiver City & State / Province Data elements City and State / Province  should be separated with an asterisk (*) as a delimiter and the field should end with a backslash (\\\\). 
      * @type {string}
      * @memberof Addenda16
      */
-    receiverCityStateProvince?: string;
+    'receiverCityStateProvince': string;
     /**
-     * Receiver Country & Postal Code Data elements must be separated by an asterisk (*) and must end with a backslash (\\) 
+     * Receiver Country & Postal Code Data elements must be separated by an asterisk (*) and must end with a backslash (\\\\). 
      * @type {string}
      * @memberof Addenda16
      */
-    receiverCountryPostalCode?: string;
+    'receiverCountryPostalCode': string;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda16
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -601,35 +652,35 @@ export interface Addenda16 {
  */
 export interface Addenda17 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda17
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 17 - NACHA regulations
      * @type {string}
      * @memberof Addenda17
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Additional information related to the payment
      * @type {string}
      * @memberof Addenda17
      */
-    paymentRelatedInformation?: string;
+    'paymentRelatedInformation': string;
     /**
-     * SequenceNumber is consecutively assigned to each Addenda17 Record following an Entry Detail Record. The first addenda17 sequence number must always be a 1. 
+     * SequenceNumber is consecutively assigned to each Addenda17 Record following an Entry Detail Record. The first Addenda17 sequence number must always be a 1. 
      * @type {number}
      * @memberof Addenda17
      */
-    sequenceNumber?: number;
+    'sequenceNumber': number;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda17
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -638,53 +689,53 @@ export interface Addenda17 {
  */
 export interface Addenda18 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda18
      */
-    id?: string;
+    'id'?: string;
     /**
-     * 10 - NACHA regulations
+     * 18 - NACHA regulations
      * @type {string}
      * @memberof Addenda18
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Name of the Foreign Correspondent Bank
      * @type {string}
      * @memberof Addenda18
      */
-    foreignCorrespondentBankName?: string;
+    'foreignCorrespondentBankName': string;
     /**
-     * Foreign Correspondent Bank Identification Number Qualifier contains a 2-digit code that identifies the numbering scheme used in the Foreign Correspondent Bank Identification Number field. Code values for this field are   \"01\" = National Clearing System   \"02\" = BIC Code   \"03\" = IBAN Code 
+     * Foreign Correspondent Bank Identification Number Qualifier contains a 2-digit code that identifies the numbering scheme used in the Foreign Correspondent Bank Identification Number field. Code values for this field are:   \"01\" = National Clearing System |   \"02\" = BIC Code |   \"03\" = IBAN Code 
      * @type {string}
      * @memberof Addenda18
      */
-    foreignCorrespondentBankIDNumberQualifier?: string;
+    'foreignCorrespondentBankIDNumberQualifier'?: string;
     /**
      * Foreign Correspondent Bank Identification Number contains the bank ID number of the Foreign Correspondent Bank
      * @type {string}
      * @memberof Addenda18
      */
-    foreignCorrespondentBankIDNumber?: string;
+    'foreignCorrespondentBankIDNumber': string;
     /**
      * Foreign Correspondent Bank Branch Country Code contains the two-character code, as approved by the International Organization for Standardization (ISO), to identify the country in which the branch of the Foreign Correspondent Bank is located. Values can be found on the International Organization for Standardization website: www.iso.org 
      * @type {string}
      * @memberof Addenda18
      */
-    foreignCorrespondentBankBranchCountryCode?: string;
+    'foreignCorrespondentBankBranchCountryCode': string;
     /**
-     * SequenceNumber is consecutively assigned to each Addenda17 Record following an Entry Detail Record. The first addenda17 sequence number must always be a 1. 
+     * SequenceNumber is consecutively assigned to each Addenda17 Record following an Entry Detail Record. The first Addenda17 sequence number must always be a 1. 
      * @type {number}
      * @memberof Addenda18
      */
-    sequenceNumber?: number;
+    'sequenceNumber': number;
     /**
-     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
+     * EntryDetailSequenceNumber contains the ascending sequence number section of the Entry Detail or Corporate Entry Detail Record\'s trace number. This number is the same as the last seven digits of the trace number of the related Entry Detail Record or Corporate Entry Detail Record. 
      * @type {number}
      * @memberof Addenda18
      */
-    entryDetailSequenceNumber?: number;
+    'entryDetailSequenceNumber': number;
 }
 /**
  * 
@@ -693,47 +744,47 @@ export interface Addenda18 {
  */
 export interface Addenda98 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda98
      */
-    id?: string;
+    'id'?: string;
     /**
      * 98 - NACHA regulations
      * @type {string}
      * @memberof Addenda98
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * ChangeCode field contains a standard code used by an ACH Operator or RDFI to describe the reason for a change Entry.
      * @type {string}
      * @memberof Addenda98
      */
-    changeCode?: string;
+    'changeCode': string;
     /**
      * OriginalTrace This field contains the Trace Number as originally included on the forward Entry or Prenotification. The RDFI must include the Original Entry Trace Number in the Addenda Record of an Entry being returned to an ODFI, in the Addenda Record of an 98, within an Acknowledgment Entry, or with an RDFI request for a copy of an authorization. 
      * @type {string}
      * @memberof Addenda98
      */
-    originalTrace?: string;
+    'originalTrace': string;
     /**
      * The Receiving DFI Identification (addenda.RDFIIdentification) as originally included on the forward Entry or Prenotification that the RDFI is returning or correcting.
      * @type {string}
      * @memberof Addenda98
      */
-    originalDFI?: string;
+    'originalDFI': string;
     /**
-     * Correct field value of what ChangeCode references
+     * Correct field value of what changeCode references
      * @type {string}
      * @memberof Addenda98
      */
-    correctedData?: string;
+    'correctedData': string;
     /**
      * Entry Detail Trace Number
      * @type {string}
      * @memberof Addenda98
      */
-    traceNumber?: string;
+    'traceNumber'?: string;
 }
 /**
  * 
@@ -742,53 +793,211 @@ export interface Addenda98 {
  */
 export interface Addenda99 {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof Addenda99
      */
-    id?: string;
+    'id'?: string;
     /**
      * 99 - NACHA regulations
      * @type {string}
      * @memberof Addenda99
      */
-    typeCode?: string;
+    'typeCode': string;
     /**
      * Standard code used by an ACH Operator or RDFI to describe the reason for returning an Entry.
      * @type {string}
      * @memberof Addenda99
      */
-    returnCode?: string;
+    'returnCode': string;
     /**
      * OriginalTrace This field contains the Trace Number as originally included on the forward Entry or Prenotification. The RDFI must include the Original Entry Trace Number in the Addenda Record of an Entry being returned to an ODFI, in the Addenda Record of an 98, within an Acknowledgment Entry, or with an RDFI request for a copy of an authorization. 
      * @type {string}
      * @memberof Addenda99
      */
-    originalTrace?: string;
+    'originalTrace': string;
     /**
-     * DateOfDeath The field date of death is to be supplied on Entries being returned for reason of death (return reason codes R14 and R15). Format YYMMDD (Y=Year, M=Month, D=Day)
+     * The field date of death is to be supplied on Entries being returned for reason of death (return reason codes R14 and R15). (Format YYMMDD - Y=Year, M=Month, D=Day)
      * @type {string}
      * @memberof Addenda99
      */
-    dateOfDeath?: string;
+    'dateOfDeath': string;
     /**
-     * OriginalDFI field contains the Receiving DFI Identification (addenda.RDFIIdentification) as originally included on the forward Entry or Prenotification that the RDFI is returning or correcting.
+     * Contains the Receiving DFI Identification (addenda.RDFIIdentification) as originally included on the forward Entry or Prenotification that the RDFI is returning or correcting.
      * @type {string}
      * @memberof Addenda99
      */
-    originalDFI?: string;
+    'originalDFI': string;
     /**
      * Information related to the return
      * @type {string}
      * @memberof Addenda99
      */
-    addendaInformation?: string;
+    'addendaInformation'?: string;
     /**
      * Matches the Entry Detail Trace Number of the entry being returned.
      * @type {string}
      * @memberof Addenda99
      */
-    traceNumber?: string;
+    'traceNumber'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface Addenda99Contested
+ */
+export interface Addenda99Contested {
+    /**
+     * Client-defined string used as a reference to this record.
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'id'?: string;
+    /**
+     * 99 - NACHA regulations
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'typeCode': string;
+    /**
+     * Return reason code of the Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'dishonoredReturnReasonCode': string;
+    /**
+     * Trace Number of the original entry being returned.
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'originalEntryTraceNumber': string;
+    /**
+     * Identification of the Original Receiving Depository Institution (ODFI)
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'originalReceivingDFIIdentification': string;
+    /**
+     * Return trace number
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'returnTraceNumber': string;
+    /**
+     * Return settlement date
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'returnSettlementDate': string;
+    /**
+     * Return reason code
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'returnReasonCode': string;
+    /**
+     * Additional information of the Contested Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'addendaInformation': string;
+    /**
+     * Unique Trace Number for the contested dishonored return
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'traceNumber': string;
+}
+/**
+ * 
+ * @export
+ * @interface Addenda99Dishonored
+ */
+export interface Addenda99Dishonored {
+    /**
+     * Client-defined string used as a reference to this record.
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'id'?: string;
+    /**
+     * 99 - NACHA regulations
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'typeCode': string;
+    /**
+     * return code explaining the contested dishonorment
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'contestedReturnCode': string;
+    /**
+     * Trace Number of the original entry being returned.
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'originalEntryTraceNumber': string;
+    /**
+     * Date original entry was returned
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'dateOriginalEntryReturned': string;
+    /**
+     * Identification of the Original Receiving Depository Institution (ODFI)
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'originalReceivingDFIIdentification': string;
+    /**
+     * Original date of settlement
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'originalSettlementDate': string;
+    /**
+     * Return trace number
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'returnTraceNumber': string;
+    /**
+     * Return settlement date
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'returnSettlementDate': string;
+    /**
+     * Return reason code
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'returnReasonCode': string;
+    /**
+     * Trace number from Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'dishonoredReturnTraceNumber': string;
+    /**
+     * Settlement date of the Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'dishonoredReturnSettlementDate': string;
+    /**
+     * Return reason code of the Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'dishonoredReturnReasonCode': string;
+    /**
+     * Matches the Entry Detail Trace Number of the entry being returned.
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'traceNumber'?: string;
 }
 /**
  * 
@@ -801,25 +1010,25 @@ export interface Batch {
      * @type {BatchHeader}
      * @memberof Batch
      */
-    batchHeader?: BatchHeader;
+    'batchHeader': BatchHeader;
     /**
      * 
      * @type {Array<EntryDetail>}
      * @memberof Batch
      */
-    entryDetails?: Array<EntryDetail>;
+    'entryDetails': Array<EntryDetail>;
     /**
      * 
      * @type {BatchControl}
      * @memberof Batch
      */
-    batchControl?: BatchControl;
+    'batchControl': BatchControl;
     /**
      * 
      * @type {Offset}
      * @memberof Batch
      */
-    offset?: Offset;
+    'offset': Offset;
 }
 /**
  * 
@@ -832,61 +1041,61 @@ export interface BatchControl {
      * @type {string}
      * @memberof BatchControl
      */
-    ID?: string;
+    'ID'?: string;
     /**
      * Same as ServiceClassCode in BatchHeaderRecord
      * @type {number}
      * @memberof BatchControl
      */
-    serviceClassCode?: number;
+    'serviceClassCode': number;
     /**
      * EntryAddendaCount is a tally of each Entry Detail Record and each Addenda Record processed, within either the batch or file as appropriate.
      * @type {number}
      * @memberof BatchControl
      */
-    entryAddendaCount?: number;
+    'entryAddendaCount': number;
     /**
      * Validate the Receiving DFI Identification in each Entry Detail Record is hashed to provide a check against inadvertent alteration of data contents due to hardware failure or program error. In this context the Entry Hash is the sum of the corresponding fields in the Entry Detail Records on the file. 
      * @type {number}
      * @memberof BatchControl
      */
-    entryHash?: number;
+    'entryHash': number;
     /**
      * Contains accumulated Entry debit totals within the batch.
      * @type {number}
      * @memberof BatchControl
      */
-    totalDebit?: number;
+    'totalDebit': number;
     /**
      * Contains accumulated Entry credit totals within the batch.
      * @type {number}
      * @memberof BatchControl
      */
-    totalCredit?: number;
+    'totalCredit': number;
     /**
-     * Alphanumeric code used to identify an Originator The Company Identification Field must be included on all prenotification records and on each entry initiated pursuant to such prenotification. The Company ID may begin with the ANSI one-digit Identification Code Designator (ICD), followed by the identification number The ANSI Identification Numbers and related Identification Code IRS Employer Identification Number (EIN) \"1\" Data Universal Numbering Systems (DUNS) \"3\" User Assigned Number \"9\" 
+     * Alphanumeric code used to identify an Originator. The Company Identification Field must be included on all prenotification records and on each entry initiated pursuant to such prenotification. The Company ID may begin with the ANSI one-digit Identification Code Designator (ICD), followed by the identification number. Possible ICDs are the IRS Employer Identification Number (EIN) \"1\", Data Universal Numbering Systems (DUNS) \"3\", and User Assigned Number \"9\". 
      * @type {string}
      * @memberof BatchControl
      */
-    companyIdentification?: string;
+    'companyIdentification': string;
     /**
      * MAC is an eight character code derived from a special key used in conjunction with the DES algorithm. The purpose of the MAC is to validate the authenticity of ACH entries. The DES algorithm and key message standards must be in accordance with standards adopted by the American National Standards Institute. The remaining eleven characters of this field are blank.
      * @type {string}
      * @memberof BatchControl
      */
-    messageAuthentication?: string;
+    'messageAuthentication'?: string;
     /**
      * The routing number is used to identify the DFI originating entries within a given branch.
      * @type {string}
      * @memberof BatchControl
      */
-    ODFIIdentification?: string;
+    'ODFIIdentification': string;
     /**
      * BatchNumber is assigned in ascending sequence to each batch by the ODFI or its Sending Point in a given file of entries. Since the batch number in the Batch Header Record and the Batch Control Record is the same, the ascending sequence number should be assigned by batch and not by record.
-     * @type {string}
+     * @type {number}
      * @memberof BatchControl
      */
-    batchNumber?: string;
+    'batchNumber': number;
 }
 /**
  * 
@@ -895,77 +1104,77 @@ export interface BatchControl {
  */
 export interface BatchHeader {
     /**
-     * Batch Header ID
+     * A client-defined ID used as a reference to this batch
      * @type {string}
      * @memberof BatchHeader
      */
-    ID?: string;
+    'ID'?: string;
     /**
-     * Service Class Code - ACH Credits Only 220 and ACH Debits Only 225
+     * Service Class Code - Mixed Debits and Credits \'200\', ACH Credits Only \'220\', or ACH Debits Only \'225\'
      * @type {number}
      * @memberof BatchHeader
      */
-    serviceClassCode: number;
+    'serviceClassCode': number;
     /**
      * Company originating the entries in the batch
      * @type {string}
      * @memberof BatchHeader
      */
-    companyName: string;
+    'companyName': string;
     /**
      * The 9 digit FEIN number (proceeded by a predetermined alpha or numeric character) of the entity in the company name field
      * @type {string}
      * @memberof BatchHeader
      */
-    companyDiscretionaryData?: string;
+    'companyDiscretionaryData'?: string;
     /**
-     * Alphanumeric code used to identify an Originator The Company Identification Field must be included on all prenotification records and on each entry initiated pursuant to such prenotification. The Company ID may begin with the ANSI one-digit Identification Code Designator (ICD), followed by the identification number The ANSI Identification Numbers and related Identification Code IRS Employer Identification Number (EIN) \"1\" Data Universal Numbering Systems (DUNS) \"3\" User Assigned Number \"9\" 
+     * Alphanumeric code used to identify an Originator. The Company Identification Field must be included on all prenotification records and on each entry initiated pursuant to such prenotification. The Company ID may begin with the ANSI one-digit Identification Code Designator (ICD), followed by the identification number. Possible ICDs are the IRS Employer Identification Number (EIN) \"1\", Data Universal Numbering Systems (DUNS) \"3\", or User Assigned Number \"9\". 
      * @type {string}
      * @memberof BatchHeader
      */
-    companyIdentification: string;
+    'companyIdentification': string;
     /**
-     * Identifies the payment type (product) found within an ACH batch-using a 3-character code.
+     * Identifies the payment type (product) found within an ACH batch using a 3-character code.
      * @type {string}
      * @memberof BatchHeader
      */
-    standardEntryClassCode?: string;
+    'standardEntryClassCode': string;
     /**
-     * A description of the entries contained in the batch. The Originator establishes the value of this field to provide a description of the purpose of the entry to be displayed back to the receive For example, \"GAS BILL,\" \"REG. SALARY,\" \"INS. PREM,\", \"SOC. SEC.,\" \"DTC,\" \"TRADE PAY,\" \"PURCHASE,\" etc. This field must contain the word \"REVERSAL\" (left justified) when the batch contains reversing entries. This field must contain the word \"RECLAIM\" (left justified) when the batch contains reclamation entries. This field must contain the word \"NONSETTLED\" (left justified) when the batch contains entries which could not settle. 
+     * A description of the entries contained in the batch. The Originator establishes the value of this field to provide a description of the purpose of the entry to be displayed back to the receiver. For example, \"GAS BILL,\" \"REG. SALARY,\" \"INS. PREM,\", \"SOC. SEC.,\" \"DTC,\" \"TRADE PAY,\" \"PURCHASE,\" etc. This field must contain the word \"REVERSAL\" (left justified) when the batch contains reversing entries. This field must contain the word \"RECLAIM\" (left justified) when the batch contains reclamation entries. This field must contain the word \"NONSETTLED\" (left justified) when the batch contains entries which could not settle. 
      * @type {string}
      * @memberof BatchHeader
      */
-    companyEntryDescription?: string;
+    'companyEntryDescription'?: string;
     /**
      * The Originator establishes this field as the date it would like to see displayed to the receiver for descriptive purposes. This field is never used to control timing of any computer or manual operation. It is solely for descriptive purposes. The RDFI should not assume any specific format. 
      * @type {string}
      * @memberof BatchHeader
      */
-    companyDescriptiveDate?: string;
+    'companyDescriptiveDate'?: string;
     /**
-     * Date on which the entries are to settle. Format YYMMDD (Y=Year, M=Month, D=Day)
+     * Date on which the entries are to settle. (Format YYMMDD - Y=Year, M=Month, D=Day)
      * @type {string}
      * @memberof BatchHeader
      */
-    effectiveEntryDate?: string;
+    'effectiveEntryDate'?: string;
     /**
-     * ODFI initiating the Entry. 0 ADV File prepared by an ACH Operator. 1 This code identifies the Originator as a depository financial institution. 2 This code identifies the Originator as a Federal Government entity or agency. 
+     * ODFI initiating the Entry. | 0 - ADV File prepared by an ACH Operator. | 1 - This code identifies the Originator as a depository financial institution. | 2 - This code identifies the Originator as a Federal Government entity or agency. 
      * @type {number}
      * @memberof BatchHeader
      */
-    originatorStatusCode?: number;
+    'originatorStatusCode'?: number;
     /**
      * First 8 digits of the originating DFI transit routing number
      * @type {string}
      * @memberof BatchHeader
      */
-    ODFIIdentification: string;
+    'ODFIIdentification': string;
     /**
      * BatchNumber is assigned in ascending sequence to each batch by the ODFI or its Sending Point in a given file of entries. Since the batch number in the Batch Header Record and the Batch Control Record is the same, the ascending sequence number should be assigned by batch and not by record. 
      * @type {number}
      * @memberof BatchHeader
      */
-    batchNumber?: number;
+    'batchNumber': number;
 }
 /**
  * 
@@ -978,43 +1187,43 @@ export interface CreateFile {
      * @type {string}
      * @memberof CreateFile
      */
-    ID?: string;
+    'ID'?: string;
     /**
      * 
      * @type {FileHeader}
      * @memberof CreateFile
      */
-    fileHeader: FileHeader;
+    'fileHeader': FileHeader;
     /**
      * 
      * @type {Array<Batch>}
      * @memberof CreateFile
      */
-    batches?: Array<Batch>;
+    'batches'?: Array<Batch>;
     /**
      * 
      * @type {Array<IATBatch>}
      * @memberof CreateFile
      */
-    IATBatches?: Array<IATBatch>;
+    'IATBatches'?: Array<IATBatch>;
     /**
      * 
      * @type {FileControl}
      * @memberof CreateFile
      */
-    fileControl?: FileControl;
+    'fileControl'?: FileControl;
     /**
      * 
      * @type {Array<ADVEntryDetail>}
      * @memberof CreateFile
      */
-    advEntryDetails?: Array<ADVEntryDetail>;
+    'advEntryDetails'?: Array<ADVEntryDetail>;
     /**
      * 
      * @type {ADVBatchControl}
      * @memberof CreateFile
      */
-    advBatchControl?: ADVBatchControl;
+    'advBatchControl'?: ADVBatchControl;
 }
 /**
  * 
@@ -1027,97 +1236,109 @@ export interface EntryDetail {
      * @type {string}
      * @memberof EntryDetail
      */
-    ID?: string;
+    'ID'?: string;
     /**
-     * transactionCode if the receivers account is: Credit (deposit) to checking account 22 Prenote for credit to checking account 23 Debit (withdrawal) to checking account 27 Prenote for debit to checking account 28 Credit to savings account 32 Prenote for credit to savings account 33 Debit to savings account 37 Prenote for debit to savings account 38 
+     * Based on transaction type: 22 - Credit (deposit) to checking account | 23 - Prenote for credit to checking account | 27 - Debit (withdrawal) to checking account | 28 - Prenote for debit to checking account | 32 - Credit to savings account | 33 - Prenote for credit to savings account | 37 - Debit to savings account | 38 - Prenote for debit to savings account 
      * @type {number}
      * @memberof EntryDetail
      */
-    transactionCode: number;
+    'transactionCode': number;
     /**
      * RDFI\'s routing number without the last digit.
      * @type {string}
      * @memberof EntryDetail
      */
-    RDFIIdentification: string;
+    'RDFIIdentification': string;
     /**
      * Last digit in RDFI routing number.
      * @type {string}
      * @memberof EntryDetail
      */
-    checkDigit: string;
+    'checkDigit': string;
     /**
-     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so its space padded, no zero padded 
+     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so it\'s space padded, not zero padded 
      * @type {string}
      * @memberof EntryDetail
      */
-    DFIAccountNumber: string;
+    'DFIAccountNumber': string;
     /**
      * Number of cents you are debiting/crediting this account
      * @type {number}
      * @memberof EntryDetail
      */
-    amount: number;
+    'amount': number;
     /**
      * Internal identification (alphanumeric) that you use to uniquely identify this Entry Detail Record
      * @type {string}
      * @memberof EntryDetail
      */
-    identificationNumber?: string;
+    'identificationNumber'?: string;
     /**
      * The name of the receiver, usually the name on the bank account
      * @type {string}
      * @memberof EntryDetail
      */
-    individualName: string;
+    'individualName': string;
     /**
-     * DiscretionaryData allows ODFIs to include codes, of significance only to them, to enable specialized handling of the entry. There will be no standardized interpretation for the value of this field. It can either be a single two-character code, or two distinct one-character codes, according to the needs of the ODFI and/or Originator involved. This field must be returned intact for any returned entry. WEB uses the Discretionary Data Field as the Payment Type Code 
+     * DiscretionaryData allows ODFIs to include codes, of significance only to them, to enable specialized handling of the entry. There will be no standardized interpretation for the value of this field. It can either be a single two-character code, or two distinct one-character codes, according to the needs of the ODFI and/or Originator involved. This field must be returned intact for any returned entry. WEB uses the Discretionary Data Field as the Payment Type Code. 
      * @type {string}
      * @memberof EntryDetail
      */
-    discretionaryData?: string;
+    'discretionaryData'?: string;
     /**
-     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one ore more addenda records follow, and \"0\" means no such record is present. 
+     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one or more addenda records follow, and \"0\" means no such record is present. 
      * @type {number}
      * @memberof EntryDetail
      */
-    addendaRecordIndicator?: number;
+    'addendaRecordIndicator'?: number;
     /**
-     * TraceNumber assigned by the ODFI in ascending sequence, is included in each Entry Detail Record, Corporate Entry Detail Record, and addenda Record. Trace Numbers uniquely identify each entry within a batch in an ACH input file. In association with the Batch Number, transmission (File Creation) Date, and File ID Modifier, the Trace Number uniquely identifies an entry within a given file. For addenda Records, the Trace Number will be identical to the Trace Number in the associated Entry Detail Record, since the Trace Number is associated with an entry or item rather than a physical record. 
+     * TraceNumber assigned by the ODFI in ascending sequence, is included in each Entry Detail Record, Corporate Entry Detail Record, and Addenda Record. Trace Numbers uniquely identify each entry within a batch in an ACH input file. In association with the Batch Number, transmission (File Creation) Date, and File ID Modifier, the Trace Number uniquely identifies an entry within a given file. For Addenda Records, the Trace Number will be identical to the Trace Number in the associated Entry Detail Record, since the Trace Number is associated with an entry or item rather than a physical record. 
      * @type {string}
      * @memberof EntryDetail
      */
-    traceNumber?: string;
+    'traceNumber'?: string;
     /**
      * 
      * @type {Addenda02}
      * @memberof EntryDetail
      */
-    addenda02?: Addenda02;
+    'addenda02'?: Addenda02;
     /**
      * List of Addenda05 records
      * @type {Array<Addenda05>}
      * @memberof EntryDetail
      */
-    addenda05?: Array<Addenda05>;
+    'addenda05'?: Array<Addenda05>;
     /**
      * 
      * @type {Addenda98}
      * @memberof EntryDetail
      */
-    addenda98?: Addenda98;
+    'addenda98'?: Addenda98;
     /**
      * 
      * @type {Addenda99}
      * @memberof EntryDetail
      */
-    addenda99?: Addenda99;
+    'addenda99'?: Addenda99;
+    /**
+     * 
+     * @type {Addenda99Dishonored}
+     * @memberof EntryDetail
+     */
+    'addenda99Dishonored'?: Addenda99Dishonored;
+    /**
+     * 
+     * @type {Addenda99Contested}
+     * @memberof EntryDetail
+     */
+    'addenda99Contested'?: Addenda99Contested;
     /**
      * Category defines if the entry is a Forward, Return, or NOC
      * @type {string}
      * @memberof EntryDetail
      */
-    category?: string;
+    'category'?: string;
 }
 /**
  * 
@@ -1126,47 +1347,47 @@ export interface EntryDetail {
  */
 export interface FileControl {
     /**
-     * Moov API File ID
+     * File ID
      * @type {string}
      * @memberof FileControl
      */
-    ID?: string;
+    'ID': string;
     /**
      * Count of Batches in the File
      * @type {number}
      * @memberof FileControl
      */
-    batchCount?: number;
+    'batchCount': number;
     /**
-     * BlockCount total number of records in the file (include all headers and trailer) divided by 10 (This number must be evenly divisible by 10. If not, additional records consisting of all 9\'s are added to the file after the initial \'9\' record to fill out the block 10.) 
+     * Total number of records in the file (include all headers and trailer) divided by 10 (This number must be evenly divisible by 10. If not, additional records consisting of all 9\'s are added to the file after the initial \'9\' record to fill out the block 10.) 
      * @type {number}
      * @memberof FileControl
      */
-    blockCount?: number;
+    'blockCount': number;
     /**
      * Total detail and addenda records in the file
      * @type {number}
      * @memberof FileControl
      */
-    entryAddendaCount?: number;
+    'entryAddendaCount': number;
     /**
-     * EntryHash calculated in the same manner as the batch has total but includes total from entire file
+     * Calculated in the same manner as the batch total but includes total from entire file
      * @type {number}
      * @memberof FileControl
      */
-    entryHash?: number;
+    'entryHash': number;
     /**
      * Accumulated Batch debit totals within the file.
      * @type {number}
      * @memberof FileControl
      */
-    totalDebit?: number;
+    'totalDebit': number;
     /**
      * Accumulated Batch credit totals within the file.
      * @type {number}
      * @memberof FileControl
      */
-    totalCredit?: number;
+    'totalCredit': number;
 }
 /**
  * 
@@ -1175,47 +1396,59 @@ export interface FileControl {
  */
 export interface FileHeader {
     /**
-     * contains the Routing Number of the ACH Operator or sending point that is sending the file.
+     * File ID
      * @type {string}
      * @memberof FileHeader
      */
-    immediateOrigin: string;
+    'ID'?: string;
     /**
-     * The name of the ACH operator or sending point that is sending the file.
+     * Contains the Routing Number of the ACH Operator or sending point that is sending the file.
      * @type {string}
      * @memberof FileHeader
      */
-    immediateOriginName: string;
+    'immediateOrigin': string;
     /**
-     * contains the Routing Number of the ACH Operator or receiving point to which the file is being sent
+     * The name of the ACH Operator or sending point that is sending the file.
      * @type {string}
      * @memberof FileHeader
      */
-    immediateDestination: string;
+    'immediateOriginName': string;
     /**
-     * The name of the ACH or receiving point for which that file is destined.
+     * Contains the Routing Number of the ACH Operator or receiving point to which the file is being sent.
      * @type {string}
      * @memberof FileHeader
      */
-    immediateDestinationName: string;
+    'immediateDestination': string;
     /**
-     * The File Creation Date is the date when the file was prepared by an ODFI. (Format HHmm - H=Hour, m=Minute)
+     * The name of the ACH Operator or receiving point to which the file is being sent.
      * @type {string}
      * @memberof FileHeader
      */
-    fileCreationTime?: string;
+    'immediateDestinationName': string;
     /**
-     * The File Creation Time is the time when the file was prepared by an ODFI. (Format YYMMDD - Y=Year, M=Month, D=Day)
+     * The File Creation Time is the time when the file was prepared by an ODFI. (Format HHmm - H=Hour, m=Minute)
      * @type {string}
      * @memberof FileHeader
      */
-    fileCreationDate?: string;
+    'fileCreationTime': string;
     /**
-     * Incremented value for each file for RDFI\'s.
+     * The File Creation Date is the date when the file was prepared by an ODFI. (Format YYMMDD - Y=Year, M=Month, D=Day)
      * @type {string}
      * @memberof FileHeader
      */
-    fileIDModifier?: string;
+    'fileCreationDate': string;
+    /**
+     * Incremented value for each file for RDFIs.
+     * @type {string}
+     * @memberof FileHeader
+     */
+    'fileIDModifier'?: string;
+    /**
+     * Reserved field for information pertinent to the Originator.
+     * @type {string}
+     * @memberof FileHeader
+     */
+    'referenceCode'?: string;
 }
 /**
  * 
@@ -1228,13 +1461,13 @@ export interface FileID {
      * @type {string}
      * @memberof FileID
      */
-    ID?: string;
+    'ID'?: string;
     /**
      * An error message describing the problem intended for humans.
      * @type {string}
      * @memberof FileID
      */
-    error?: string;
+    'error'?: string;
 }
 /**
  * 
@@ -1243,29 +1476,29 @@ export interface FileID {
  */
 export interface IATBatch {
     /**
-     * Client defined string used as a reference to this record.
+     * Client-defined string used as a reference to this record.
      * @type {string}
      * @memberof IATBatch
      */
-    ID?: string;
+    'ID'?: string;
     /**
      * 
      * @type {IATBatchHeader}
      * @memberof IATBatch
      */
-    IATBatchHeader?: IATBatchHeader;
+    'IATBatchHeader': IATBatchHeader;
     /**
      * 
      * @type {Array<IATEntryDetail>}
      * @memberof IATBatch
      */
-    IATEntryDetails?: Array<IATEntryDetail>;
+    'IATEntryDetails': Array<IATEntryDetail>;
     /**
      * 
      * @type {BatchControl}
      * @memberof IATBatch
      */
-    batchControl?: BatchControl;
+    'batchControl': BatchControl;
 }
 /**
  * 
@@ -1274,101 +1507,101 @@ export interface IATBatch {
  */
 export interface IATBatchHeader {
     /**
-     * ID is a client defined string used as a reference to this record.
+     * ID is a client-defined string used as a reference to this record.
      * @type {string}
      * @memberof IATBatchHeader
      */
-    ID?: string;
+    'ID'?: string;
     /**
-     * ServiceClassCode ACH Mixed Debits and Credits \'200\' ACH Credits Only \'220\' ACH Debits Only \'225\' 
+     * Service Class Code - Mixed Debits and Credits \'200\', ACH Credits Only \'220\', or ACH Debits Only \'225\'
      * @type {number}
      * @memberof IATBatchHeader
      */
-    serviceClassCode?: number;
+    'serviceClassCode': number;
     /**
      * Leave Blank. Only used for corrected IAT entries
      * @type {string}
      * @memberof IATBatchHeader
      */
-    IATIndicator?: string;
+    'IATIndicator'?: string;
     /**
-     * Code indicating currency conversion. FV Fixed-to-Variable – Entry is originated in a fixed-value amount and is to be received in a variable amount resulting from the execution of the foreign exchange conversion. VF Variable-to-Fixed – Entry is originated in a variable-value amount based on a specific foreign exchange rate for conversion to a fixed-value amount in which the entry is to be received. FF Fixed-to-Fixed – Entry is originated in a fixed-value amount and is to be received in the same fixed-value amount in the same currency denomination. There is no foreign exchange conversion for entries transmitted using this code. For entries originated in a fixed value amount, the foreign Exchange Reference Field will be space filled. 
+     * Code indicating currency conversion: \'FV\' (Fixed-to-Variable) – Entry is originated in a fixed-value amount and is to be received in a variable amount resulting from the execution of the foreign exchange conversion. | \'VF\' (Variable-to-Fixed) – Entry is originated in a variable-value amount based on a specific foreign exchange rate for conversion to a fixed-value amount in which the entry is to be received. | \'FF\' (Fixed-to-Fixed) – Entry is originated in a fixed-value amount and is to be received in the same fixed-value amount in the same currency denomination. There is no foreign exchange conversion for entries transmitted using this code. For entries originated in a fixed value amount, the foreign Exchange Reference Field will be space filled. 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    foreignExchangeIndicator?: string;
+    'foreignExchangeIndicator': string;
     /**
-     * Code used to indicate the content of the Foreign Exchange Reference Field and is filled by the gateway operator. Valid entries are 1 - Foreign Exchange Rate; 2 - Foreign Exchange Reference Number; or 3 - Space Filled 
+     * Code used to indicate the content of the Foreign Exchange Reference Field and is filled by the gateway operator. Valid entries are 1 - Foreign Exchange Rate | 2 - Foreign Exchange Reference Number | 3 - Space Filled 
      * @type {number}
      * @memberof IATBatchHeader
      */
-    foreignExchangeReferenceIndicator?: number;
+    'foreignExchangeReferenceIndicator': number;
     /**
-     * Contains either the foreign exchange rate used to execute the foreign exchange conversion of a cross-border entry or another reference to the foreign exchange transaction. 
+     * Contains either the foreign exchange rate used to execute the foreign exchange conversion of a cross-border entry or another reference to the foreign exchange transaction.
      * @type {string}
      * @memberof IATBatchHeader
      */
-    foreignExchangeReference?: string;
+    'foreignExchangeReference': string;
     /**
      * Two-character code, as approved by the International Organization for Standardization (ISO), to identify the country in which the entry is to be received. For United States use US.
      * @type {string}
      * @memberof IATBatchHeader
      */
-    ISODestinationCountryCode?: string;
+    'ISODestinationCountryCode': string;
     /**
      * For U.S. entities: the number assigned will be your tax ID (often Social Security Number) For non-U.S. entities: the number assigned will be your DDA number, or the last 9 characters of your account number if it exceeds 9 characters 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    originatorIdentification?: string;
+    'originatorIdentification': string;
     /**
-     * StandardEntryClassCode for consumer and non consumer international payments is IAT. Identifies the payment type (product) found within an ACH batch-using a 3-character code. The SEC Code pertains to all items within batch. Determines format of the detail records. Determines addenda records (required or optional PLUS one or up to 9,999 records). Determines rules to follow (return time frames). Some SEC codes require specific data in predetermined fields within the ACH record 
+     * StandardEntryClassCode for consumer and non consumer international payments is IAT. Identifies the payment type (product) found within an ACH batch using a 3-character code. The SEC Code pertains to all items within batch. Determines format of the detail records. Determines addenda records (required or optional PLUS one or up to 9,999 records). Determines rules to follow (return time frames). Some SEC codes require specific data in predetermined fields within the ACH record. 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    standardEntryClassCode?: string;
+    'standardEntryClassCode': string;
     /**
-     * A description of the entries contained in the batch The Originator establishes the value of this field to provide a description of the purpose of the entry to be displayed back to the receive For example, \"GAS BILL,\" \"REG. SALARY,\" \"INS. PREM,\" \"SOC. SEC.,\" \"DTC,\" \"TRADE PAY,\" \"PURCHASE,\" etc. This field must contain the word \"REVERSAL\" (left justified) when the batch contains reversing entries. This field must contain the word \"RECLAIM\" (left justified) when the batch contains reclamation entries. This field must contain the word \"NONSETTLED\" (left justified) when the batch contains entries which could not settle. 
+     * A description of the entries contained in the batch The Originator establishes the value of this field to provide a description of the purpose of the entry to be displayed back to the receiver. For example, \"GAS BILL,\" \"REG. SALARY,\" \"INS. PREM,\" \"SOC. SEC.,\" \"DTC,\" \"TRADE PAY,\" \"PURCHASE,\" etc. This field must contain the word \"REVERSAL\" (left justified) when the batch contains reversing entries. This field must contain the word \"RECLAIM\" (left justified) when the batch contains reclamation entries. This field must contain the word \"NONSETTLED\" (left justified) when the batch contains entries which could not settle. 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    companyEntryDescription?: string;
+    'companyEntryDescription'?: string;
     /**
      * Three-character code, as approved by the International Organization for Standardization (ISO), to identify the currency denomination in which the entry was first originated. If the source of funds is within the territorial jurisdiction of the U.S., enter \'USD\', otherwise refer to International Organization for Standardization website for value: www.iso.org 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    ISOOriginatingCurrencyCode?: string;
+    'ISOOriginatingCurrencyCode': string;
     /**
      * ISODestinationCurrencyCode is the three-character code, as approved by the International Organization for Standardization (ISO), to identify the currency denomination in which the entry will ultimately be settled. If the final destination of funds is within the territorial jurisdiction of the U.S., enter \"USD\", otherwise refer to International Organization for Standardization website for value: www.iso.org 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    ISODestinationCurrencyCode?: string;
+    'ISODestinationCurrencyCode': string;
     /**
-     * EffectiveEntryDate the date on which the entries are to settle format YYMMDD (Y=Year, M=Month, D=Day) 
+     * EffectiveEntryDate the date on which the entries are to settle. Format YYMMDD (Y=Year, M=Month, D=Day) 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    effectiveEntryDate?: string;
+    'effectiveEntryDate'?: string;
     /**
-     * SettlementDate Leave blank, this field is inserted by the ACH operator settlementDate string OriginatorStatusCode refers to the ODFI initiating the Entry. 0 ADV File prepared by an ACH Operator. 1 This code identifies the Originator as a depository financial institution. 2 This code identifies the Originator as a Federal Government entity or agency. 
+     * ODFI initiating the Entry. | 0 - ADV File prepared by an ACH Operator. | 1 - This code identifies the Originator as a depository financial institution. | 2 - This code identifies the Originator as a Federal Government entity or agency. 
      * @type {number}
      * @memberof IATBatchHeader
      */
-    originatorStatusCode?: number;
+    'originatorStatusCode'?: number;
     /**
-     * ODFIIdentification First 8 digits of the originating DFI transit routing number for Inbound IAT Entries, this field contains the routing number of the U.S. Gateway Operator.  For Outbound IAT Entries, this field contains the standard routing number, as assigned by Accuity, that identifies the U.S. ODFI initiating the Entry. Format - TTTTAAAA 
+     * First 8 digits of the originating DFI transit routing number. For Inbound IAT Entries, this field contains the routing number of the U.S. Gateway Operator.  For Outbound IAT Entries, this field contains the standard routing number, as assigned by Accuity, that identifies the U.S. ODFI initiating the Entry. (Format TTTTAAAA - T=Federal Reserve Routing Symbol, A=ABA Institution Identifier) 
      * @type {string}
      * @memberof IATBatchHeader
      */
-    ODFIIdentification?: string;
+    'ODFIIdentification': string;
     /**
      * BatchNumber is assigned in ascending sequence to each batch by the ODFI or its Sending Point in a given file of entries. Since the batch number in the Batch Header Record and the Batch Control Record is the same, the ascending sequence number should be assigned by batch and not by record. 
      * @type {number}
      * @memberof IATBatchHeader
      */
-    batchNumber?: number;
+    'batchNumber': number;
 }
 /**
  * 
@@ -1381,139 +1614,139 @@ export interface IATEntryDetail {
      * @type {string}
      * @memberof IATEntryDetail
      */
-    ID?: string;
+    'ID'?: string;
     /**
-     * TransactionCode if the receivers account is Credit (deposit) to checking account \'22\' Prenote for credit to checking account \'23\' Debit (withdrawal) to checking account \'27\' Prenote for debit to checking account \'28\' Credit to savings account \'32\' Prenote for credit to savings account \'33\' Debit to savings account \'37\' Prenote for debit to savings account \'38\' 
+     * Based on transaction type: 22 - Credit (deposit) to checking account | 23 - Prenote for credit to checking account | 27 - Debit (withdrawal) to checking account | 28 - Prenote for debit to checking account | 32 - Credit to savings account | 33 - Prenote for credit to savings account | 37 - Debit to savings account | 38 - Prenote for debit to savings account 
      * @type {number}
      * @memberof IATEntryDetail
      */
-    transactionCode?: number;
+    'transactionCode': number;
     /**
      * RDFI\'s routing number without the last digit.
      * @type {string}
      * @memberof IATEntryDetail
      */
-    RDFIIdentification?: string;
+    'RDFIIdentification': string;
     /**
      * Last digit in RDFI routing number.
      * @type {string}
      * @memberof IATEntryDetail
      */
-    checkDigit?: string;
+    'checkDigit': string;
     /**
      * Number of Addenda Records
      * @type {number}
      * @memberof IATEntryDetail
      */
-    AddendaRecords?: number;
+    'addendaRecords': number;
     /**
      * Number of cents you are debiting/crediting this account
      * @type {number}
      * @memberof IATEntryDetail
      */
-    amount?: number;
+    'amount': number;
     /**
-     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so its space padded, no zero padded 
+     * The receiver\'s bank account number you are crediting/debiting. It important to note that this is an alphanumeric field, so it\'s space padded, not zero padded 
      * @type {string}
      * @memberof IATEntryDetail
      */
-    DFIAccountNumber?: string;
+    'DFIAccountNumber': string;
     /**
      * Signifies if the record has been screened against OFAC records
      * @type {string}
      * @memberof IATEntryDetail
      */
-    OFACScreeningIndicator?: string;
+    'OFACScreeningIndicator': string;
     /**
      * Signifies if the record has been screened against OFAC records by a secondary entry
      * @type {string}
      * @memberof IATEntryDetail
      */
-    SecondaryOFACScreeningIndicator?: string;
+    'secondaryOFACScreeningIndicator': string;
     /**
-     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one ore more addenda records follow, and \"0\" means no such record is present. 
+     * AddendaRecordIndicator indicates the existence of an Addenda Record. A value of \"1\" indicates that one or more addenda records follow, and \"0\" means no such record is present. 
      * @type {number}
      * @memberof IATEntryDetail
      */
-    addendaRecordIndicator?: number;
+    'addendaRecordIndicator': number;
     /**
      * Matches the Entry Detail Trace Number of the entry being returned.
      * @type {string}
      * @memberof IATEntryDetail
      */
-    traceNumber?: string;
+    'traceNumber'?: string;
     /**
      * 
      * @type {Addenda10}
      * @memberof IATEntryDetail
      */
-    addenda10?: Addenda10;
+    'addenda10': Addenda10;
     /**
      * 
      * @type {Addenda11}
      * @memberof IATEntryDetail
      */
-    addenda11?: Addenda11;
+    'addenda11': Addenda11;
     /**
      * 
      * @type {Addenda12}
      * @memberof IATEntryDetail
      */
-    addenda12?: Addenda12;
+    'addenda12': Addenda12;
     /**
      * 
      * @type {Addenda13}
      * @memberof IATEntryDetail
      */
-    addenda13?: Addenda13;
+    'addenda13': Addenda13;
     /**
      * 
      * @type {Addenda14}
      * @memberof IATEntryDetail
      */
-    addenda14?: Addenda14;
+    'addenda14': Addenda14;
     /**
      * 
      * @type {Addenda15}
      * @memberof IATEntryDetail
      */
-    addenda15?: Addenda15;
+    'addenda15': Addenda15;
     /**
      * 
      * @type {Addenda16}
      * @memberof IATEntryDetail
      */
-    addenda16?: Addenda16;
+    'addenda16': Addenda16;
     /**
      * 
      * @type {Addenda17}
      * @memberof IATEntryDetail
      */
-    addenda17?: Addenda17;
+    'addenda17'?: Addenda17;
     /**
      * 
      * @type {Addenda18}
      * @memberof IATEntryDetail
      */
-    addenda18?: Addenda18;
+    'addenda18'?: Addenda18;
     /**
      * 
      * @type {Addenda98}
      * @memberof IATEntryDetail
      */
-    addenda98?: Addenda98;
+    'addenda98'?: Addenda98;
     /**
      * 
      * @type {Addenda99}
      * @memberof IATEntryDetail
      */
-    addenda99?: Addenda99;
+    'addenda99'?: Addenda99;
     /**
      * Category defines if the entry is a Forward, Return, or NOC
      * @type {string}
      * @memberof IATEntryDetail
      */
-    category?: string;
+    'category'?: string;
 }
 /**
  * 
@@ -1526,7 +1759,7 @@ export interface ModelError {
      * @type {string}
      * @memberof ModelError
      */
-    error: string;
+    'error': string;
 }
 /**
  * 
@@ -1539,43 +1772,49 @@ export interface ModelFile {
      * @type {string}
      * @memberof ModelFile
      */
-    ID?: string;
+    'ID': string;
     /**
      * 
      * @type {FileHeader}
      * @memberof ModelFile
      */
-    fileHeader?: FileHeader;
+    'fileHeader': FileHeader;
     /**
      * 
      * @type {Array<Batch>}
      * @memberof ModelFile
      */
-    batches?: Array<Batch>;
+    'batches'?: Array<Batch>;
     /**
      * 
      * @type {Array<IATBatch>}
      * @memberof ModelFile
      */
-    IATBatches?: Array<IATBatch>;
+    'IATBatches'?: Array<IATBatch>;
     /**
      * 
      * @type {FileControl}
      * @memberof ModelFile
      */
-    fileControl?: FileControl;
+    'fileControl': FileControl;
     /**
      * 
      * @type {Array<Batch>}
      * @memberof ModelFile
      */
-    NotificationOfChange?: Array<Batch>;
+    'NotificationOfChange'?: Array<Batch> | null;
     /**
      * 
      * @type {Array<Batch>}
      * @memberof ModelFile
      */
-    ReturnEntries?: Array<Batch>;
+    'ReturnEntries'?: Array<Batch> | null;
+    /**
+     * 
+     * @type {ADVFileControl}
+     * @memberof ModelFile
+     */
+    'fileADVControl'?: ADVFileControl;
 }
 /**
  * 
@@ -1588,35 +1827,33 @@ export interface Offset {
      * @type {string}
      * @memberof Offset
      */
-    routingNumber?: string;
+    'routingNumber': string;
     /**
      * Account number used to offset records
      * @type {string}
      * @memberof Offset
      */
-    accountNumber?: string;
+    'accountNumber': string;
     /**
      * Account type used in offset record
      * @type {string}
      * @memberof Offset
      */
-    accountType?: OffsetAccountTypeEnum;
+    'accountType': OffsetAccountTypeEnum;
     /**
      * Memo for Offset EntryDetail record
      * @type {string}
      * @memberof Offset
      */
-    description?: string;
+    'description': string;
 }
 
-/**
-    * @export
-    * @enum {string}
-    */
-export enum OffsetAccountTypeEnum {
-    Checking = 'checking',
-    Savings = 'savings'
-}
+export const OffsetAccountTypeEnum = {
+    Checking: 'checking',
+    Savings: 'savings'
+} as const;
+
+export type OffsetAccountTypeEnum = typeof OffsetAccountTypeEnum[keyof typeof OffsetAccountTypeEnum];
 
 /**
  * 
@@ -1629,13 +1866,13 @@ export interface SegmentedFiles {
      * @type {string}
      * @memberof SegmentedFiles
      */
-    creditFileID?: string;
+    'creditFileID'?: string;
     /**
      * File ID
      * @type {string}
      * @memberof SegmentedFiles
      */
-    debitFileID?: string;
+    'debitFileID'?: string;
 }
 /**
  * 
@@ -1648,19 +1885,19 @@ export interface ValidateOpts {
      * @type {boolean}
      * @memberof ValidateOpts
      */
-    requireABAOrigin?: boolean;
+    'requireABAOrigin'?: boolean;
     /**
      * Skip ImmediateOrigin validation steps.
      * @type {boolean}
      * @memberof ValidateOpts
      */
-    bypassOriginValidation?: boolean;
+    'bypassOriginValidation'?: boolean;
     /**
      * Skip ImmediateDestination validation steps.
      * @type {boolean}
      * @memberof ValidateOpts
      */
-    bypassDestinationValidation?: boolean;
+    'bypassDestinationValidation'?: boolean;
 }
 
 /**
@@ -1670,31 +1907,29 @@ export interface ValidateOpts {
 export const ACHFilesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Append a Batch record to the specified file
-         * @summary Add Batch to File
+         * Append a Batch record to the specified File.
+         * @summary Append Batch to File
          * @param {string} fileID File ID
          * @param {Batch} batch 
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addBatchToFile: async (fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
+        addBatchToFile: async (fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling addBatchToFile.');
-            }
+            assertParamExists('addBatchToFile', 'fileID', fileID)
             // verify required parameter 'batch' is not null or undefined
-            if (batch === null || batch === undefined) {
-                throw new RequiredError('batch','Required parameter batch was null or undefined when calling addBatchToFile.');
-            }
+            assertParamExists('addBatchToFile', 'batch', batch)
             const localVarPath = `/files/{fileID}/batches`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1711,39 +1946,36 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof batch !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(batch !== undefined ? batch : {}) : (batch || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(batch, localVarRequestOptions, configuration)
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns JSON formatted file. 
+         * @summary Build File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        checkFile: async (fileID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        buildFile: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling checkFile.');
-            }
-            const localVarPath = `/files/{fileID}/validate`
+            assertParamExists('buildFile', 'fileID', fileID)
+            const localVarPath = `/files/{fileID}/build`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1754,14 +1986,51 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        checkFile: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fileID' is not null or undefined
+            assertParamExists('checkFile', 'fileID', fileID)
+            const localVarPath = `/files/{fileID}/validate`
+                .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (xRequestID !== undefined && xRequestID !== null) {
+                localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -1769,25 +2038,75 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
          * @param {string} body Content of the ACH file (in json or raw text)
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (body: string, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
+        createFile: async (body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
-            if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling createFile.');
-            }
+            assertParamExists('createFile', 'body', body)
             const localVarPath = `/files/create`;
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (requireABAOrigin !== undefined) {
+                localVarQueryParameter['requireABAOrigin'] = requireABAOrigin;
+            }
+
+            if (bypassOrigin !== undefined) {
+                localVarQueryParameter['bypassOrigin'] = bypassOrigin;
+            }
+
+            if (bypassDestination !== undefined) {
+                localVarQueryParameter['bypassDestination'] = bypassDestination;
+            }
+
+            if (customTraceNumbers !== undefined) {
+                localVarQueryParameter['customTraceNumbers'] = customTraceNumbers;
+            }
+
+            if (allowZeroBatches !== undefined) {
+                localVarQueryParameter['allowZeroBatches'] = allowZeroBatches;
+            }
+
+            if (allowMissingFileHeader !== undefined) {
+                localVarQueryParameter['allowMissingFileHeader'] = allowMissingFileHeader;
+            }
+
+            if (allowMissingFileControl !== undefined) {
+                localVarQueryParameter['allowMissingFileControl'] = allowMissingFileControl;
+            }
+
+            if (bypassCompanyIdentificationMatch !== undefined) {
+                localVarQueryParameter['bypassCompanyIdentificationMatch'] = bypassCompanyIdentificationMatch;
+            }
+
+            if (customReturnCodes !== undefined) {
+                localVarQueryParameter['customReturnCodes'] = customReturnCodes;
+            }
+
+            if (unequalServiceClassCode !== undefined) {
+                localVarQueryParameter['unequalServiceClassCode'] = unequalServiceClassCode;
+            }
 
             if (xRequestID !== undefined && xRequestID !== null) {
                 localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
@@ -1801,39 +2120,36 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
     
             localVarHeaderParameter['Content-Type'] = 'text/plain';
 
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
-         * @summary Delete file
+         * @summary Delete File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteACHFile: async (fileID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        deleteACHFile: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling deleteACHFile.');
-            }
+            assertParamExists('deleteACHFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1844,43 +2160,39 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Delete a Batch from a File
-         * @summary Delete batch
+         * Delete a Batch from a File.
+         * @summary Delete Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFileBatch: async (fileID: string, batchID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        deleteFileBatch: async (fileID: string, batchID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling deleteFileBatch.');
-            }
+            assertParamExists('deleteFileBatch', 'fileID', fileID)
             // verify required parameter 'batchID' is not null or undefined
-            if (batchID === null || batchID === undefined) {
-                throw new RequiredError('batchID','Required parameter batchID was null or undefined when calling deleteFileBatch.');
-            }
+            assertParamExists('deleteFileBatch', 'batchID', batchID)
             const localVarPath = `/files/{fileID}/batches/{batchID}`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)))
                 .replace(`{${"batchID"}}`, encodeURIComponent(String(batchID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1891,38 +2203,36 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Consolidate batches and entries into the minimum number of batches needed.
-         * @summary Flatten batches
+         * Consolidate Batches and Entries into the minimum number of Batches needed.
+         * @summary Flatten Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        flattenFile: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
+        flattenFile: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling flattenFile.');
-            }
+            assertParamExists('flattenFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/flatten`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1937,43 +2247,39 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Get a specific Batch on a File
+         * Get a specific Batch on a File.
          * @summary Get Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileBatch: async (fileID: string, batchID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        getFileBatch: async (fileID: string, batchID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling getFileBatch.');
-            }
+            assertParamExists('getFileBatch', 'fileID', fileID)
             // verify required parameter 'batchID' is not null or undefined
-            if (batchID === null || batchID === undefined) {
-                throw new RequiredError('batchID','Required parameter batchID was null or undefined when calling getFileBatch.');
-            }
+            assertParamExists('getFileBatch', 'batchID', batchID)
             const localVarPath = `/files/{fileID}/batches/{batchID}`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)))
                 .replace(`{${"batchID"}}`, encodeURIComponent(String(batchID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -1984,37 +2290,35 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Get the batches on a File.
-         * @summary Get batches
+         * Get the Batches on a File.
+         * @summary Get Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileBatches: async (fileID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        getFileBatches: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling getFileBatches.');
-            }
+            assertParamExists('getFileBatches', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/batches`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2025,37 +2329,35 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
          * Get the details of an existing File using the unique File identifier that was returned upon creation.
-         * @summary Retrieve a file
+         * @summary Retrieve File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileByID: async (fileID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        getFileByID: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling getFileByID.');
-            }
+            assertParamExists('getFileByID', 'fileID', fileID)
             const localVarPath = `/files/{fileID}`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2066,37 +2368,35 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Assembles the existing file (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
-         * @summary Get file contents
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
+         * @summary Get File Contents
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileContents: async (fileID: string, xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        getFileContents: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling getFileContents.');
-            }
+            assertParamExists('getFileContents', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/contents`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2107,31 +2407,31 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * List all ACH files created with the ACH service. These files are not persisted through multiple runs of the service.
-         * @summary Get ACH files
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * List all ACH Files created with the ACH service. These Files are not persisted through multiple runs of the service.
+         * @summary List Files
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFiles: async (xRequestID?: string, options: any = {}): Promise<RequestArgs> => {
+        getFiles: async (xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/files`;
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2142,68 +2442,66 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Check the ACH service to check if running
+         * Check if the ACH service is running.
          * @summary Ping ACH service
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ping: async (options: any = {}): Promise<RequestArgs> => {
+        ping: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/ping`;
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Split one file into two. One with only debits and one with only credits.
-         * @summary Segment file
+         * Split one File into two. One with only debits and one with only credits.
+         * @summary Segment File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        segmentFile: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, options: any = {}): Promise<RequestArgs> => {
+        segmentFile: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling segmentFile.');
-            }
+            assertParamExists('segmentFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/segment`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2218,38 +2516,36 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File (Custom)
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        validateFile: async (fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options: any = {}): Promise<RequestArgs> => {
+        validateFile: async (fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            if (fileID === null || fileID === undefined) {
-                throw new RequiredError('fileID','Required parameter fileID was null or undefined when calling validateFile.');
-            }
+            assertParamExists('validateFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/validate`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
-            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
+
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
@@ -2262,16 +2558,13 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
-            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof validateOpts !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(validateOpts !== undefined ? validateOpts : {}) : (validateOpts || "");
+            localVarRequestOptions.data = serializeDataIfNeeded(validateOpts, localVarRequestOptions, configuration)
 
             return {
-                url: globalImportUrl.format(localVarUrlObj),
+                url: toPathString(localVarUrlObj),
                 options: localVarRequestOptions,
             };
         },
@@ -2283,221 +2576,202 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
  * @export
  */
 export const ACHFilesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ACHFilesApiAxiosParamCreator(configuration)
     return {
         /**
-         * Append a Batch record to the specified file
-         * @summary Add Batch to File
+         * Append a Batch record to the specified File.
+         * @summary Append Batch to File
          * @param {string} fileID File ID
          * @param {Batch} batch 
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addBatchToFile(fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).addBatchToFile(fileID, batch, xRequestID, xIdempotencyKey, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async addBatchToFile(fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addBatchToFile(fileID, batch, xRequestID, xIdempotencyKey, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns JSON formatted file. 
+         * @summary Build File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async checkFile(fileID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).checkFile(fileID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async buildFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.buildFile(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async checkFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.checkFile(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
          * @param {string} body Content of the ACH file (in json or raw text)
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).createFile(body, xRequestID, xIdempotencyKey, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
-         * @summary Delete file
+         * @summary Delete File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteACHFile(fileID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).deleteACHFile(fileID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async deleteACHFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteACHFile(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Delete a Batch from a File
-         * @summary Delete batch
+         * Delete a Batch from a File.
+         * @summary Delete Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).deleteFileBatch(fileID, batchID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async deleteFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFileBatch(fileID, batchID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Consolidate batches and entries into the minimum number of batches needed.
-         * @summary Flatten batches
+         * Consolidate Batches and Entries into the minimum number of Batches needed.
+         * @summary Flatten Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).flattenFile(fileID, xRequestID, xIdempotencyKey, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.flattenFile(fileID, xRequestID, xIdempotencyKey, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Get a specific Batch on a File
+         * Get a specific Batch on a File.
          * @summary Get Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Batch>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).getFileBatch(fileID, batchID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async getFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Batch>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileBatch(fileID, batchID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Get the batches on a File.
-         * @summary Get batches
+         * Get the Batches on a File.
+         * @summary Get Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFileBatches(fileID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Batch>>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).getFileBatches(fileID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async getFileBatches(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Batch>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileBatches(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Get the details of an existing File using the unique File identifier that was returned upon creation.
-         * @summary Retrieve a file
+         * @summary Retrieve File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFileByID(fileID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).getFileByID(fileID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async getFileByID(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<any>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileByID(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Assembles the existing file (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
-         * @summary Get file contents
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
+         * @summary Get File Contents
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFileContents(fileID: string, xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).getFileContents(fileID, xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async getFileContents(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileContents(fileID, xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * List all ACH files created with the ACH service. These files are not persisted through multiple runs of the service.
-         * @summary Get ACH files
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * List all ACH Files created with the ACH service. These Files are not persisted through multiple runs of the service.
+         * @summary List Files
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFiles(xRequestID?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<any>>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).getFiles(xRequestID, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async getFiles(xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<any>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFiles(xRequestID, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Check the ACH service to check if running
+         * Check if the ACH service is running.
          * @summary Ping ACH service
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async ping(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).ping(options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async ping(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.ping(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Split one file into two. One with only debits and one with only credits.
-         * @summary Segment file
+         * Split one File into two. One with only debits and one with only credits.
+         * @summary Segment File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SegmentedFiles>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).segmentFile(fileID, xRequestID, xIdempotencyKey, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SegmentedFiles>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.segmentFile(fileID, xRequestID, xIdempotencyKey, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File (Custom)
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
-            const localVarAxiosArgs = await ACHFilesApiAxiosParamCreator(configuration).validateFile(fileID, xRequestID, validateOpts, options);
-            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
-                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
-                return axios.request(axiosRequestArgs);
-            };
+        async validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateFile(fileID, xRequestID, validateOpts, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
 };
@@ -2507,165 +2781,187 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
  * @export
  */
 export const ACHFilesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ACHFilesApiFp(configuration)
     return {
         /**
-         * Append a Batch record to the specified file
-         * @summary Add Batch to File
+         * Append a Batch record to the specified File.
+         * @summary Append Batch to File
          * @param {string} fileID File ID
          * @param {Batch} batch 
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         addBatchToFile(fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<void> {
-            return ACHFilesApiFp(configuration).addBatchToFile(fileID, batch, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+            return localVarFp.addBatchToFile(fileID, batch, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns JSON formatted file. 
+         * @summary Build File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        buildFile(fileID: string, xRequestID?: string, options?: any): AxiosPromise<any> {
+            return localVarFp.buildFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         checkFile(fileID: string, xRequestID?: string, options?: any): AxiosPromise<Error> {
-            return ACHFilesApiFp(configuration).checkFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.checkFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
          * @param {string} body Content of the ACH file (in json or raw text)
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FileID> {
-            return ACHFilesApiFp(configuration).createFile(body, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+        createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: any): AxiosPromise<FileID> {
+            return localVarFp.createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
-         * @summary Delete file
+         * @summary Delete File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         deleteACHFile(fileID: string, xRequestID?: string, options?: any): AxiosPromise<void> {
-            return ACHFilesApiFp(configuration).deleteACHFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.deleteACHFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * Delete a Batch from a File
-         * @summary Delete batch
+         * Delete a Batch from a File.
+         * @summary Delete Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         deleteFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any): AxiosPromise<void> {
-            return ACHFilesApiFp(configuration).deleteFileBatch(fileID, batchID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.deleteFileBatch(fileID, batchID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * Consolidate batches and entries into the minimum number of batches needed.
-         * @summary Flatten batches
+         * Consolidate Batches and Entries into the minimum number of Batches needed.
+         * @summary Flatten Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FileID> {
-            return ACHFilesApiFp(configuration).flattenFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+            return localVarFp.flattenFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
         },
         /**
-         * Get a specific Batch on a File
+         * Get a specific Batch on a File.
          * @summary Get Batch
          * @param {string} fileID File ID
          * @param {string} batchID Batch ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any): AxiosPromise<Batch> {
-            return ACHFilesApiFp(configuration).getFileBatch(fileID, batchID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.getFileBatch(fileID, batchID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * Get the batches on a File.
-         * @summary Get batches
+         * Get the Batches on a File.
+         * @summary Get Batches
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getFileBatches(fileID: string, xRequestID?: string, options?: any): AxiosPromise<Array<Batch>> {
-            return ACHFilesApiFp(configuration).getFileBatches(fileID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.getFileBatches(fileID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
          * Get the details of an existing File using the unique File identifier that was returned upon creation.
-         * @summary Retrieve a file
+         * @summary Retrieve File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getFileByID(fileID: string, xRequestID?: string, options?: any): AxiosPromise<any> {
-            return ACHFilesApiFp(configuration).getFileByID(fileID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.getFileByID(fileID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * Assembles the existing file (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
-         * @summary Get file contents
+         * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
+         * @summary Get File Contents
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getFileContents(fileID: string, xRequestID?: string, options?: any): AxiosPromise<string> {
-            return ACHFilesApiFp(configuration).getFileContents(fileID, xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.getFileContents(fileID, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * List all ACH files created with the ACH service. These files are not persisted through multiple runs of the service.
-         * @summary Get ACH files
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * List all ACH Files created with the ACH service. These Files are not persisted through multiple runs of the service.
+         * @summary List Files
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getFiles(xRequestID?: string, options?: any): AxiosPromise<Array<any>> {
-            return ACHFilesApiFp(configuration).getFiles(xRequestID, options).then((request) => request(axios, basePath));
+            return localVarFp.getFiles(xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
-         * Check the ACH service to check if running
+         * Check if the ACH service is running.
          * @summary Ping ACH service
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         ping(options?: any): AxiosPromise<void> {
-            return ACHFilesApiFp(configuration).ping(options).then((request) => request(axios, basePath));
+            return localVarFp.ping(options).then((request) => request(axios, basePath));
         },
         /**
-         * Split one file into two. One with only debits and one with only credits.
-         * @summary Segment file
+         * Split one File into two. One with only debits and one with only credits.
+         * @summary Segment File
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<SegmentedFiles> {
-            return ACHFilesApiFp(configuration).segmentFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+            return localVarFp.segmentFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
         },
         /**
-         * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-         * @summary Validate file
+         * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+         * @summary Validate File (Custom)
          * @param {string} fileID File ID
-         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: any): AxiosPromise<Error> {
-            return ACHFilesApiFp(configuration).validateFile(fileID, xRequestID, validateOpts, options).then((request) => request(axios, basePath));
+            return localVarFp.validateFile(fileID, xRequestID, validateOpts, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2678,30 +2974,43 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
  */
 export class ACHFilesApi extends BaseAPI {
     /**
-     * Append a Batch record to the specified file
-     * @summary Add Batch to File
+     * Append a Batch record to the specified File.
+     * @summary Append Batch to File
      * @param {string} fileID File ID
      * @param {Batch} batch 
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public addBatchToFile(fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
+    public addBatchToFile(fileID: string, batch: Batch, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).addBatchToFile(fileID, batch, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-     * @summary Validate file
+     * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns JSON formatted file. 
+     * @summary Build File
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public checkFile(fileID: string, xRequestID?: string, options?: any) {
+    public buildFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).buildFile(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+     * @summary Validate File
+     * @param {string} fileID File ID
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ACHFilesApi
+     */
+    public checkFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).checkFile(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -2709,161 +3018,170 @@ export class ACHFilesApi extends BaseAPI {
      * Create a new File object from either the plaintext or JSON representation.
      * @summary Create File
      * @param {string} body Content of the ACH file (in json or raw text)
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+     * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
-        return ACHFilesApiFp(this.configuration).createFile(body, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
+    public createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Permanently deletes a File and associated Batches. It cannot be undone.
-     * @summary Delete file
+     * @summary Delete File
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public deleteACHFile(fileID: string, xRequestID?: string, options?: any) {
+    public deleteACHFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).deleteACHFile(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Delete a Batch from a File
-     * @summary Delete batch
+     * Delete a Batch from a File.
+     * @summary Delete Batch
      * @param {string} fileID File ID
      * @param {string} batchID Batch ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public deleteFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any) {
+    public deleteFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).deleteFileBatch(fileID, batchID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Consolidate batches and entries into the minimum number of batches needed.
-     * @summary Flatten batches
+     * Consolidate Batches and Entries into the minimum number of Batches needed.
+     * @summary Flatten Batches
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
+    public flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).flattenFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Get a specific Batch on a File
+     * Get a specific Batch on a File.
      * @summary Get Batch
      * @param {string} fileID File ID
      * @param {string} batchID Batch ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: any) {
+    public getFileBatch(fileID: string, batchID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).getFileBatch(fileID, batchID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Get the batches on a File.
-     * @summary Get batches
+     * Get the Batches on a File.
+     * @summary Get Batches
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFileBatches(fileID: string, xRequestID?: string, options?: any) {
+    public getFileBatches(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).getFileBatches(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Get the details of an existing File using the unique File identifier that was returned upon creation.
-     * @summary Retrieve a file
+     * @summary Retrieve File
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFileByID(fileID: string, xRequestID?: string, options?: any) {
+    public getFileByID(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).getFileByID(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Assembles the existing file (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
-     * @summary Get file contents
+     * Assembles the existing File (batches and controls) records, computes sequence numbers and totals. Returns plaintext file. 
+     * @summary Get File Contents
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFileContents(fileID: string, xRequestID?: string, options?: any) {
+    public getFileContents(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).getFileContents(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * List all ACH files created with the ACH service. These files are not persisted through multiple runs of the service.
-     * @summary Get ACH files
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * List all ACH Files created with the ACH service. These Files are not persisted through multiple runs of the service.
+     * @summary List Files
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFiles(xRequestID?: string, options?: any) {
+    public getFiles(xRequestID?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).getFiles(xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Check the ACH service to check if running
+     * Check if the ACH service is running.
      * @summary Ping ACH service
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public ping(options?: any) {
+    public ping(options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).ping(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Split one file into two. One with only debits and one with only credits.
-     * @summary Segment file
+     * Split one File into two. One with only debits and one with only credits.
+     * @summary Segment File
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
-     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy for to not collide with each other in your requests.
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any) {
+    public segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).segmentFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Validates the existing file. You need only supply the unique File identifier that was returned upon creation.
-     * @summary Validate file
+     * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
+     * @summary Validate File (Custom)
      * @param {string} fileID File ID
-     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the systems logs
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {ValidateOpts} [validateOpts] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: any) {
+    public validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig) {
         return ACHFilesApiFp(this.configuration).validateFile(fileID, xRequestID, validateOpts, options).then((request) => request(this.axios, this.basePath));
     }
-
 }
 
 
