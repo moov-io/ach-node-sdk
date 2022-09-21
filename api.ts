@@ -32,7 +32,7 @@ export interface ADVBatchControl {
      * @type {string}
      * @memberof ADVBatchControl
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Same as ServiceClassCode in BatchHeader record
      * @type {number}
@@ -93,7 +93,7 @@ export interface ADVEntryDetail {
      * @type {string}
      * @memberof ADVEntryDetail
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * TransactionCode representing Accounting Entries: 81 - Credit for ACH debits originated | 82 - Debit for ACH credits originated | 83 - Credit for ACH credits received | 84 - Debit for ACH debits received | 85 - Credit for ACH credits in rejected batches | 86 - Debit for ACH debits in rejected batches | 87 - Summary credit for respondent ACH activity | 88 - Summary debit for respondent ACH activity 
      * @type {number}
@@ -202,7 +202,7 @@ export interface ADVFileControl {
      * @type {string}
      * @memberof ADVFileControl
      */
-    'ID': string;
+    'id'?: string;
     /**
      * Count of Batches in the File
      * @type {number}
@@ -509,6 +509,12 @@ export interface Addenda13 {
      * @memberof Addenda13
      */
     'ODFIIDNumberQualifier': string;
+    /**
+     * Originating DFI Identification. This field contains the routing number that identifies the U.S. ODFI initiating the entry. For Inbound IATs: This field contains the bank ID number of the Foreign Bank providing funding for the payment transaction. 
+     * @type {string}
+     * @memberof Addenda13
+     */
+    'ODFIIdentification'?: string;
     /**
      * Originating DFI Branch Country Code: USb = United States //(\"b\" indicates a blank space) For Inbound IATs: This 3 position field contains a 2-character code as approved by the International Organization for Standardization (ISO) used to identify the country in which the branch of the bank that originated the entry is located. Values for other countries can be found on the International Organization for Standardization website: www.iso.org. 
      * @type {string}
@@ -860,11 +866,35 @@ export interface Addenda99Contested {
      */
     'typeCode': string;
     /**
+     * return code explaining the contested dishonorment
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'contestedReturnCode': string;
+    /**
+     * Date original entry was returned
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'dateOriginalEntryReturned': string;
+    /**
      * Return reason code of the Dishonored Return
      * @type {string}
      * @memberof Addenda99Contested
      */
     'dishonoredReturnReasonCode': string;
+    /**
+     * Trace number from Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'dishonoredReturnTraceNumber': string;
+    /**
+     * Settlement date of the Dishonored Return
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'dishonoredReturnSettlementDate': string;
     /**
      * Trace Number of the original entry being returned.
      * @type {string}
@@ -877,6 +907,12 @@ export interface Addenda99Contested {
      * @memberof Addenda99Contested
      */
     'originalReceivingDFIIdentification': string;
+    /**
+     * Original date of settlement
+     * @type {string}
+     * @memberof Addenda99Contested
+     */
+    'originalSettlementDate': string;
     /**
      * Return trace number
      * @type {string}
@@ -895,12 +931,6 @@ export interface Addenda99Contested {
      * @memberof Addenda99Contested
      */
     'returnReasonCode': string;
-    /**
-     * Additional information of the Contested Dishonored Return
-     * @type {string}
-     * @memberof Addenda99Contested
-     */
-    'addendaInformation': string;
     /**
      * Unique Trace Number for the contested dishonored return
      * @type {string}
@@ -927,35 +957,17 @@ export interface Addenda99Dishonored {
      */
     'typeCode': string;
     /**
-     * return code explaining the contested dishonorment
-     * @type {string}
-     * @memberof Addenda99Dishonored
-     */
-    'contestedReturnCode': string;
-    /**
      * Trace Number of the original entry being returned.
      * @type {string}
      * @memberof Addenda99Dishonored
      */
     'originalEntryTraceNumber': string;
     /**
-     * Date original entry was returned
-     * @type {string}
-     * @memberof Addenda99Dishonored
-     */
-    'dateOriginalEntryReturned': string;
-    /**
      * Identification of the Original Receiving Depository Institution (ODFI)
      * @type {string}
      * @memberof Addenda99Dishonored
      */
     'originalReceivingDFIIdentification': string;
-    /**
-     * Original date of settlement
-     * @type {string}
-     * @memberof Addenda99Dishonored
-     */
-    'originalSettlementDate': string;
     /**
      * Return trace number
      * @type {string}
@@ -975,18 +987,6 @@ export interface Addenda99Dishonored {
      */
     'returnReasonCode': string;
     /**
-     * Trace number from Dishonored Return
-     * @type {string}
-     * @memberof Addenda99Dishonored
-     */
-    'dishonoredReturnTraceNumber': string;
-    /**
-     * Settlement date of the Dishonored Return
-     * @type {string}
-     * @memberof Addenda99Dishonored
-     */
-    'dishonoredReturnSettlementDate': string;
-    /**
      * Return reason code of the Dishonored Return
      * @type {string}
      * @memberof Addenda99Dishonored
@@ -998,6 +998,12 @@ export interface Addenda99Dishonored {
      * @memberof Addenda99Dishonored
      */
     'traceNumber'?: string;
+    /**
+     * Additional data
+     * @type {string}
+     * @memberof Addenda99Dishonored
+     */
+    'addendaInformation'?: string;
 }
 /**
  * 
@@ -1025,10 +1031,16 @@ export interface Batch {
     'batchControl': BatchControl;
     /**
      * 
-     * @type {Offset}
+     * @type {Array<ADVEntryDetail>}
      * @memberof Batch
      */
-    'offset': Offset;
+    'advEntryDetails'?: Array<ADVEntryDetail>;
+    /**
+     * 
+     * @type {ADVBatchControl}
+     * @memberof Batch
+     */
+    'advBatchControl'?: ADVBatchControl;
 }
 /**
  * 
@@ -1041,7 +1053,7 @@ export interface BatchControl {
      * @type {string}
      * @memberof BatchControl
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Same as ServiceClassCode in BatchHeaderRecord
      * @type {number}
@@ -1108,7 +1120,7 @@ export interface BatchHeader {
      * @type {string}
      * @memberof BatchHeader
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Service Class Code - Mixed Debits and Credits \'200\', ACH Credits Only \'220\', or ACH Debits Only \'225\'
      * @type {number}
@@ -1175,6 +1187,12 @@ export interface BatchHeader {
      * @memberof BatchHeader
      */
     'batchNumber': number;
+    /**
+     * The date the entries actually settled (this is inserted by the ACH operator)
+     * @type {string}
+     * @memberof BatchHeader
+     */
+    'settlementDate'?: string;
 }
 /**
  * 
@@ -1187,7 +1205,7 @@ export interface CreateFile {
      * @type {string}
      * @memberof CreateFile
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * 
      * @type {FileHeader}
@@ -1228,6 +1246,31 @@ export interface CreateFile {
 /**
  * 
  * @export
+ * @interface CreateFileResponse
+ */
+export interface CreateFileResponse {
+    /**
+     * File ID
+     * @type {string}
+     * @memberof CreateFileResponse
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {any}
+     * @memberof CreateFileResponse
+     */
+    'file'?: any;
+    /**
+     * An error message describing the problem intended for humans.
+     * @type {string}
+     * @memberof CreateFileResponse
+     */
+    'error'?: string;
+}
+/**
+ * 
+ * @export
  * @interface EntryDetail
  */
 export interface EntryDetail {
@@ -1236,7 +1279,7 @@ export interface EntryDetail {
      * @type {string}
      * @memberof EntryDetail
      */
-    'ID'?: string;
+    'id': string;
     /**
      * Based on transaction type: 22 - Credit (deposit) to checking account | 23 - Prenote for credit to checking account | 27 - Debit (withdrawal) to checking account | 28 - Prenote for debit to checking account | 32 - Credit to savings account | 33 - Prenote for credit to savings account | 37 - Debit to savings account | 38 - Prenote for debit to savings account 
      * @type {number}
@@ -1351,7 +1394,7 @@ export interface FileControl {
      * @type {string}
      * @memberof FileControl
      */
-    'ID': string;
+    'id'?: string;
     /**
      * Count of Batches in the File
      * @type {number}
@@ -1400,7 +1443,7 @@ export interface FileHeader {
      * @type {string}
      * @memberof FileHeader
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Contains the Routing Number of the ACH Operator or sending point that is sending the file.
      * @type {string}
@@ -1453,19 +1496,25 @@ export interface FileHeader {
 /**
  * 
  * @export
- * @interface FileID
+ * @interface FlattenFileResponse
  */
-export interface FileID {
+export interface FlattenFileResponse {
     /**
      * File ID
      * @type {string}
-     * @memberof FileID
+     * @memberof FlattenFileResponse
      */
-    'ID'?: string;
+    'id'?: string;
+    /**
+     * 
+     * @type {any}
+     * @memberof FlattenFileResponse
+     */
+    'file'?: any;
     /**
      * An error message describing the problem intended for humans.
      * @type {string}
-     * @memberof FileID
+     * @memberof FlattenFileResponse
      */
     'error'?: string;
 }
@@ -1480,7 +1529,7 @@ export interface IATBatch {
      * @type {string}
      * @memberof IATBatch
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * 
      * @type {IATBatchHeader}
@@ -1511,7 +1560,7 @@ export interface IATBatchHeader {
      * @type {string}
      * @memberof IATBatchHeader
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Service Class Code - Mixed Debits and Credits \'200\', ACH Credits Only \'220\', or ACH Debits Only \'225\'
      * @type {number}
@@ -1602,6 +1651,12 @@ export interface IATBatchHeader {
      * @memberof IATBatchHeader
      */
     'batchNumber': number;
+    /**
+     * The date the entries actually settled (this is inserted by the ACH operator)
+     * @type {string}
+     * @memberof IATBatchHeader
+     */
+    'settlementDate'?: string;
 }
 /**
  * 
@@ -1614,7 +1669,7 @@ export interface IATEntryDetail {
      * @type {string}
      * @memberof IATEntryDetail
      */
-    'ID'?: string;
+    'id'?: string;
     /**
      * Based on transaction type: 22 - Credit (deposit) to checking account | 23 - Prenote for credit to checking account | 27 - Debit (withdrawal) to checking account | 28 - Prenote for debit to checking account | 32 - Credit to savings account | 33 - Prenote for credit to savings account | 37 - Debit to savings account | 38 - Prenote for debit to savings account 
      * @type {number}
@@ -1772,7 +1827,7 @@ export interface ModelFile {
      * @type {string}
      * @memberof ModelFile
      */
-    'ID': string;
+    'id'?: string;
     /**
      * 
      * @type {FileHeader}
@@ -1858,6 +1913,25 @@ export type OffsetAccountTypeEnum = typeof OffsetAccountTypeEnum[keyof typeof Of
 /**
  * 
  * @export
+ * @interface SegmentFile
+ */
+export interface SegmentFile {
+    /**
+     * 
+     * @type {any}
+     * @memberof SegmentFile
+     */
+    'file'?: any;
+    /**
+     * 
+     * @type {any}
+     * @memberof SegmentFile
+     */
+    'opts'?: any;
+}
+/**
+ * 
+ * @export
  * @interface SegmentedFiles
  */
 export interface SegmentedFiles {
@@ -1868,11 +1942,29 @@ export interface SegmentedFiles {
      */
     'creditFileID'?: string;
     /**
+     * 
+     * @type {any}
+     * @memberof SegmentedFiles
+     */
+    'creditFile'?: any;
+    /**
      * File ID
      * @type {string}
      * @memberof SegmentedFiles
      */
     'debitFileID'?: string;
+    /**
+     * 
+     * @type {any}
+     * @memberof SegmentedFiles
+     */
+    'debitFile'?: any;
+    /**
+     * An error message describing the problem intended for humans.
+     * @type {string}
+     * @memberof SegmentedFiles
+     */
+    'error'?: string;
 }
 /**
  * 
@@ -1898,6 +1990,54 @@ export interface ValidateOpts {
      * @memberof ValidateOpts
      */
     'bypassDestinationValidation'?: boolean;
+    /**
+     * Disable Nacha specified checks of TraceNumbers.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'customTraceNumbers'?: boolean;
+    /**
+     * Allow the file to have zero batches.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'allowZeroBatches'?: boolean;
+    /**
+     * Allow the file to be read without a FileHeader record.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'allowMissingFileHeader'?: boolean;
+    /**
+     * Allow the file to be read without a FileControl record.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'allowMissingFileControl'?: boolean;
+    /**
+     * Allow batches in which the Company Identification field in the batch header and control do not match.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'bypassCompanyIdentificationMatch'?: boolean;
+    /**
+     * Allow for non-standard/deprecated return codes (e.g. R97)
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'customReturnCodes'?: boolean;
+    /**
+     * Skip equality checks for the ServiceClassCode in each pair of BatchHeader and BatchControl records.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'unequalServiceClassCode'?: boolean;
+    /**
+     * Allow a file to be read with unordered batch numbers.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'allowUnorderedBatchNumbers'?: boolean;
 }
 
 /**
@@ -2037,6 +2177,7 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
+         * @param {string} fileID File ID
          * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
@@ -2053,10 +2194,13 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createFile: async (fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'fileID' is not null or undefined
+            assertParamExists('createFile', 'fileID', fileID)
             // verify required parameter 'body' is not null or undefined
             assertParamExists('createFile', 'body', body)
-            const localVarPath = `/files/create`;
+            const localVarPath = `/files/{fileID}`
+                .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2484,15 +2628,60 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Split one File into two. One with only debits and one with only credits.
          * @summary Segment File
-         * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {string} [body] ACH file (in Nacha or JSON formatting) along with optional segment configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        segmentFile: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        segmentFile: async (xRequestID?: string, xIdempotencyKey?: string, body?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/segment`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (xRequestID !== undefined && xRequestID !== null) {
+                localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
+            }
+
+            if (xIdempotencyKey !== undefined && xIdempotencyKey !== null) {
+                localVarHeaderParameter['X-Idempotency-Key'] = String(xIdempotencyKey);
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'text/plain';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Split one FileID into two. One with only debits and one with only credits.
+         * @summary Segment FileID
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {any} [body] Optional configuration for segmenting files
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        segmentFileID: async (fileID: string, xRequestID?: string, xIdempotencyKey?: string, body?: any, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
-            assertParamExists('segmentFile', 'fileID', fileID)
+            assertParamExists('segmentFileID', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/segment`
                 .replace(`{${"fileID"}}`, encodeURIComponent(String(fileID)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -2516,9 +2705,12 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2619,6 +2811,7 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
+         * @param {string} fileID File ID
          * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
@@ -2635,8 +2828,8 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options);
+        async createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2673,7 +2866,7 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FileID>> {
+        async flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FlattenFileResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.flattenFile(fileID, xRequestID, xIdempotencyKey, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -2750,14 +2943,28 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
         /**
          * Split one File into two. One with only debits and one with only credits.
          * @summary Segment File
-         * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {string} [body] ACH file (in Nacha or JSON formatting) along with optional segment configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SegmentedFiles>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.segmentFile(fileID, xRequestID, xIdempotencyKey, options);
+        async segmentFile(xRequestID?: string, xIdempotencyKey?: string, body?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SegmentedFiles>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.segmentFile(xRequestID, xIdempotencyKey, body, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Split one FileID into two. One with only debits and one with only credits.
+         * @summary Segment FileID
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {any} [body] Optional configuration for segmenting files
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async segmentFileID(fileID: string, xRequestID?: string, xIdempotencyKey?: string, body?: any, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SegmentedFiles>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.segmentFileID(fileID, xRequestID, xIdempotencyKey, body, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2821,6 +3028,7 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
         /**
          * Create a new File object from either the plaintext or JSON representation.
          * @summary Create File
+         * @param {string} fileID File ID
          * @param {string} body Content of the ACH file (in json or raw text)
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
@@ -2837,8 +3045,8 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: any): AxiosPromise<FileID> {
-            return localVarFp.createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(axios, basePath));
+        createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
+            return localVarFp.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
@@ -2872,7 +3080,7 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FileID> {
+        flattenFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<FlattenFileResponse> {
             return localVarFp.flattenFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2942,14 +3150,27 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
         /**
          * Split one File into two. One with only debits and one with only credits.
          * @summary Segment File
-         * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {string} [body] ACH file (in Nacha or JSON formatting) along with optional segment configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: any): AxiosPromise<SegmentedFiles> {
-            return localVarFp.segmentFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(axios, basePath));
+        segmentFile(xRequestID?: string, xIdempotencyKey?: string, body?: string, options?: any): AxiosPromise<SegmentedFiles> {
+            return localVarFp.segmentFile(xRequestID, xIdempotencyKey, body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Split one FileID into two. One with only debits and one with only credits.
+         * @summary Segment FileID
+         * @param {string} fileID File ID
+         * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+         * @param {any} [body] Optional configuration for segmenting files
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        segmentFileID(fileID: string, xRequestID?: string, xIdempotencyKey?: string, body?: any, options?: any): AxiosPromise<SegmentedFiles> {
+            return localVarFp.segmentFileID(fileID, xRequestID, xIdempotencyKey, body, options).then((request) => request(axios, basePath));
         },
         /**
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
@@ -3017,6 +3238,7 @@ export class ACHFilesApi extends BaseAPI {
     /**
      * Create a new File object from either the plaintext or JSON representation.
      * @summary Create File
+     * @param {string} fileID File ID
      * @param {string} body Content of the ACH file (in json or raw text)
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
@@ -3034,8 +3256,8 @@ export class ACHFilesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).createFile(body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(this.axios, this.basePath));
+    public createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3158,15 +3380,30 @@ export class ACHFilesApi extends BaseAPI {
     /**
      * Split one File into two. One with only debits and one with only credits.
      * @summary Segment File
-     * @param {string} fileID File ID
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+     * @param {string} [body] ACH file (in Nacha or JSON formatting) along with optional segment configuration
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public segmentFile(fileID: string, xRequestID?: string, xIdempotencyKey?: string, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).segmentFile(fileID, xRequestID, xIdempotencyKey, options).then((request) => request(this.axios, this.basePath));
+    public segmentFile(xRequestID?: string, xIdempotencyKey?: string, body?: string, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).segmentFile(xRequestID, xIdempotencyKey, body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Split one FileID into two. One with only debits and one with only credits.
+     * @summary Segment FileID
+     * @param {string} fileID File ID
+     * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {string} [xIdempotencyKey] Idempotent key in the header which expires after 24 hours. These strings should contain enough entropy to not collide with each other in your requests.
+     * @param {any} [body] Optional configuration for segmenting files
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ACHFilesApi
+     */
+    public segmentFileID(fileID: string, xRequestID?: string, xIdempotencyKey?: string, body?: any, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).segmentFileID(fileID, xRequestID, xIdempotencyKey, body, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
