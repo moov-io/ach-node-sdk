@@ -1928,6 +1928,12 @@ export interface SegmentFile {
      * @memberof SegmentFile
      */
     'opts'?: any;
+    /**
+     * 
+     * @type {ValidateOpts}
+     * @memberof SegmentFile
+     */
+    'validateOpts'?: ValidateOpts;
 }
 /**
  * 
@@ -2037,7 +2043,19 @@ export interface ValidateOpts {
      * @type {boolean}
      * @memberof ValidateOpts
      */
-    'allowUnorderedBatchNumbers'?: boolean;
+    'unorderedBatchNumbers'?: boolean;
+    /**
+     * Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'allowInvalidCheckDigit'?: boolean;
+    /**
+     * Skip checking that Addenda Count fields match their expected and computed values.
+     * @type {boolean}
+     * @memberof ValidateOpts
+     */
+    'unequalAddendaCounts'?: boolean;
 }
 
 /**
@@ -2191,10 +2209,13 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createFile: async (fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('createFile', 'fileID', fileID)
             // verify required parameter 'body' is not null or undefined
@@ -2250,6 +2271,18 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
             if (unequalServiceClassCode !== undefined) {
                 localVarQueryParameter['unequalServiceClassCode'] = unequalServiceClassCode;
+            }
+
+            if (unorderedBatchNumbers !== undefined) {
+                localVarQueryParameter['unorderedBatchNumbers'] = unorderedBatchNumbers;
+            }
+
+            if (allowInvalidCheckDigit !== undefined) {
+                localVarQueryParameter['allowInvalidCheckDigit'] = allowInvalidCheckDigit;
+            }
+
+            if (unequalAddendaCounts !== undefined) {
+                localVarQueryParameter['unequalAddendaCounts'] = unequalAddendaCounts;
             }
 
             if (xRequestID !== undefined && xRequestID !== null) {
@@ -2825,11 +2858,14 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options);
+        async createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3042,11 +3078,14 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
-            return localVarFp.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(axios, basePath));
+        createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
+            return localVarFp.createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
@@ -3252,12 +3291,15 @@ export class ACHFilesApi extends BaseAPI {
      * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+     * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+     * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, options).then((request) => request(this.axios, this.basePath));
+    public createFile(fileID: string, body: string, xRequestID?: string, xIdempotencyKey?: string, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, xIdempotencyKey, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
