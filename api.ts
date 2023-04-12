@@ -1043,6 +1043,12 @@ export interface Batch {
      * @memberof Batch
      */
     'advBatchControl'?: ADVBatchControl;
+    /**
+     * 
+     * @type {Offset}
+     * @memberof Batch
+     */
+    'offset'?: Offset;
 }
 /**
  * 
