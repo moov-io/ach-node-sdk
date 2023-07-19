@@ -797,6 +797,67 @@ export interface Addenda98 {
 /**
  * 
  * @export
+ * @interface Addenda98Refused
+ */
+export interface Addenda98Refused {
+    /**
+     * Client-defined string used as a reference to this record.
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'id'?: string;
+    /**
+     * 98 - NACHA regulations
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'typeCode': string;
+    /**
+     * The code specifying why the Notification of Change is being refused.
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'refusedChangeCode': string;
+    /**
+     * OriginalTrace This field contains the Trace Number as originally included on the forward Entry or Prenotification. The RDFI must include the Original Entry Trace Number in the Addenda Record of an Entry being returned to an ODFI, in the Addenda Record of an 98, within an Acknowledgment Entry, or with an RDFI request for a copy of an authorization. 
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'originalTrace': string;
+    /**
+     * The Receiving DFI Identification (addenda.RDFIIdentification) as originally included on the forward Entry or Prenotification that the RDFI is returning or correcting.
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'originalDFI': string;
+    /**
+     * Correct field value of what changeCode references
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'correctedData': string;
+    /**
+     * ChangeCode field contains a standard code used by an ACH Operator or RDFI to describe the reason for a change Entry.
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'changeCode': string;
+    /**
+     * The last seven digits of the TraceNumber in the original Notification of Change.
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'traceSequenceNumber': string;
+    /**
+     * Entry Detail Trace Number
+     * @type {string}
+     * @memberof Addenda98Refused
+     */
+    'traceNumber': string;
+}
+/**
+ * 
+ * @export
  * @interface Addenda99
  */
 export interface Addenda99 {
@@ -1366,6 +1427,12 @@ export interface EntryDetail {
      * @memberof EntryDetail
      */
     'addenda98'?: Addenda98;
+    /**
+     * 
+     * @type {Addenda98Refused}
+     * @memberof EntryDetail
+     */
+    'addenda98Refused'?: Addenda98Refused;
     /**
      * 
      * @type {Addenda99}
@@ -2216,10 +2283,11 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createFile: async (fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('createFile', 'fileID', fileID)
             // verify required parameter 'body' is not null or undefined
@@ -2295,6 +2363,10 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
             if (preserveSpaces !== undefined) {
                 localVarQueryParameter['preserveSpaces'] = preserveSpaces;
+            }
+
+            if (allowInvalidAmounts !== undefined) {
+                localVarQueryParameter['allowInvalidAmounts'] = allowInvalidAmounts;
             }
 
             if (xRequestID != null) {
@@ -2854,11 +2926,12 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, options);
+        async createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3071,11 +3144,12 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
-            return localVarFp.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, options).then((request) => request(axios, basePath));
+        createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
+            return localVarFp.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
@@ -3281,12 +3355,13 @@ export class ACHFilesApi extends BaseAPI {
      * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
      * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
      * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+     * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, options).then((request) => request(this.axios, this.basePath));
+    public createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
