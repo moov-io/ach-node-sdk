@@ -1849,16 +1849,16 @@ export interface IATEntryDetail {
     'addenda16': Addenda16;
     /**
      * 
-     * @type {Addenda17}
+     * @type {Array<Addenda17>}
      * @memberof IATEntryDetail
      */
-    'addenda17'?: Addenda17;
+    'addenda17'?: Array<Addenda17>;
     /**
      * 
-     * @type {Addenda18}
+     * @type {Array<Addenda18>}
      * @memberof IATEntryDetail
      */
-    'addenda18'?: Addenda18;
+    'addenda18'?: Array<Addenda18>;
     /**
      * 
      * @type {Addenda98}
