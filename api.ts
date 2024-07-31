@@ -1091,7 +1091,7 @@ export interface Batch {
      * @type {BatchControl}
      * @memberof Batch
      */
-    'batchControl': BatchControl;
+    'batchControl'?: BatchControl;
     /**
      * 
      * @type {Array<ADVEntryDetail>}
@@ -1225,7 +1225,7 @@ export interface BatchHeader {
      * @type {string}
      * @memberof BatchHeader
      */
-    'companyEntryDescription'?: string;
+    'companyEntryDescription': string;
     /**
      * The Originator establishes this field as the date it would like to see displayed to the receiver for descriptive purposes. This field is never used to control timing of any computer or manual operation. It is solely for descriptive purposes. The RDFI should not assume any specific format. 
      * @type {string}
@@ -1255,7 +1255,7 @@ export interface BatchHeader {
      * @type {number}
      * @memberof BatchHeader
      */
-    'batchNumber': number;
+    'batchNumber'?: number;
     /**
      * The date the entries actually settled (this is inserted by the ACH operator)
      * @type {string}
@@ -1264,7 +1264,7 @@ export interface BatchHeader {
     'settlementDate'?: string;
 }
 /**
- * 
+ * \\`batches\\` OR `IATBatches` is required
  * @export
  * @interface CreateFile
  */
@@ -1286,13 +1286,13 @@ export interface CreateFile {
      * @type {Array<Batch>}
      * @memberof CreateFile
      */
-    'batches'?: Array<Batch>;
+    'batches': Array<Batch>;
     /**
      * 
      * @type {Array<IATBatch>}
      * @memberof CreateFile
      */
-    'IATBatches'?: Array<IATBatch>;
+    'IATBatches': Array<IATBatch>;
     /**
      * 
      * @type {FileControl}
@@ -1348,7 +1348,7 @@ export interface EntryDetail {
      * @type {string}
      * @memberof EntryDetail
      */
-    'id': string;
+    'id'?: string;
     /**
      * Based on transaction type: 22 - Credit (deposit) to checking account | 23 - Prenote for credit to checking account | 27 - Debit (withdrawal) to checking account | 28 - Prenote for debit to checking account | 32 - Credit to savings account | 33 - Prenote for credit to savings account | 37 - Debit to savings account | 38 - Prenote for debit to savings account 
      * @type {number}
@@ -1530,7 +1530,7 @@ export interface FileHeader {
      * @type {string}
      * @memberof FileHeader
      */
-    'immediateOriginName': string;
+    'immediateOriginName'?: string;
     /**
      * Contains the Routing Number of the ACH Operator or receiving point to which the file is being sent.
      * @type {string}
@@ -1542,13 +1542,13 @@ export interface FileHeader {
      * @type {string}
      * @memberof FileHeader
      */
-    'immediateDestinationName': string;
+    'immediateDestinationName'?: string;
     /**
      * The File Creation Time is the time when the file was prepared by an ODFI. (Format HHmm - H=Hour, m=Minute)
      * @type {string}
      * @memberof FileHeader
      */
-    'fileCreationTime': string;
+    'fileCreationTime'?: string;
     /**
      * The File Creation Date is the date when the file was prepared by an ODFI. (Format YYMMDD - Y=Year, M=Month, D=Day)
      * @type {string}
@@ -2227,11 +2227,27 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        checkFile: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        checkFile: async (fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('checkFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/validate`
@@ -2246,6 +2262,70 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (skipAll !== undefined) {
+                localVarQueryParameter['skipAll'] = skipAll;
+            }
+
+            if (requireABAOrigin !== undefined) {
+                localVarQueryParameter['requireABAOrigin'] = requireABAOrigin;
+            }
+
+            if (bypassOriginValidation !== undefined) {
+                localVarQueryParameter['bypassOriginValidation'] = bypassOriginValidation;
+            }
+
+            if (bypassDestinationValidation !== undefined) {
+                localVarQueryParameter['bypassDestinationValidation'] = bypassDestinationValidation;
+            }
+
+            if (customTraceNumbers !== undefined) {
+                localVarQueryParameter['customTraceNumbers'] = customTraceNumbers;
+            }
+
+            if (allowZeroBatches !== undefined) {
+                localVarQueryParameter['allowZeroBatches'] = allowZeroBatches;
+            }
+
+            if (allowMissingFileHeader !== undefined) {
+                localVarQueryParameter['allowMissingFileHeader'] = allowMissingFileHeader;
+            }
+
+            if (allowMissingFileControl !== undefined) {
+                localVarQueryParameter['allowMissingFileControl'] = allowMissingFileControl;
+            }
+
+            if (bypassCompanyIdentificationMatch !== undefined) {
+                localVarQueryParameter['bypassCompanyIdentificationMatch'] = bypassCompanyIdentificationMatch;
+            }
+
+            if (customReturnCodes !== undefined) {
+                localVarQueryParameter['customReturnCodes'] = customReturnCodes;
+            }
+
+            if (unequalServiceClassCode !== undefined) {
+                localVarQueryParameter['unequalServiceClassCode'] = unequalServiceClassCode;
+            }
+
+            if (allowUnorderedBatchNumbers !== undefined) {
+                localVarQueryParameter['allowUnorderedBatchNumbers'] = allowUnorderedBatchNumbers;
+            }
+
+            if (allowInvalidCheckDigit !== undefined) {
+                localVarQueryParameter['allowInvalidCheckDigit'] = allowInvalidCheckDigit;
+            }
+
+            if (unequalAddendaCounts !== undefined) {
+                localVarQueryParameter['unequalAddendaCounts'] = unequalAddendaCounts;
+            }
+
+            if (preserveSpaces !== undefined) {
+                localVarQueryParameter['preserveSpaces'] = preserveSpaces;
+            }
+
+            if (allowInvalidAmounts !== undefined) {
+                localVarQueryParameter['allowInvalidAmounts'] = allowInvalidAmounts;
+            }
 
             if (xRequestID != null) {
                 localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
@@ -2271,7 +2351,9 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
          * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
@@ -2280,6 +2362,7 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
@@ -2287,7 +2370,7 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile: async (fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createFile: async (fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestination?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('createFile', 'fileID', fileID)
             // verify required parameter 'body' is not null or undefined
@@ -2317,8 +2400,16 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['bypassOrigin'] = bypassOrigin;
             }
 
+            if (bypassOriginValidation !== undefined) {
+                localVarQueryParameter['bypassOriginValidation'] = bypassOriginValidation;
+            }
+
             if (bypassDestination !== undefined) {
                 localVarQueryParameter['bypassDestination'] = bypassDestination;
+            }
+
+            if (bypassDestinationValidation !== undefined) {
+                localVarQueryParameter['bypassDestinationValidation'] = bypassDestinationValidation;
             }
 
             if (customTraceNumbers !== undefined) {
@@ -2351,6 +2442,10 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
             if (unorderedBatchNumbers !== undefined) {
                 localVarQueryParameter['unorderedBatchNumbers'] = unorderedBatchNumbers;
+            }
+
+            if (allowUnorderedBatchNumbers !== undefined) {
+                localVarQueryParameter['allowUnorderedBatchNumbers'] = allowUnorderedBatchNumbers;
             }
 
             if (allowInvalidCheckDigit !== undefined) {
@@ -2634,10 +2729,11 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * @summary Get File Contents
          * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {'LF' | 'CRLF'} [xLineEnding] Optional Line Ending allows application developer to alter line ending of the file data returned. Supported choices are LF (Line Feed) and CRLF (Carriage Return Line Feed).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileContents: async (fileID: string, xRequestID?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFileContents: async (fileID: string, xRequestID?: string, xLineEnding?: 'LF' | 'CRLF', options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('getFileContents', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/contents`
@@ -2655,6 +2751,10 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
 
             if (xRequestID != null) {
                 localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
+            }
+
+            if (xLineEnding != null) {
+                localVarHeaderParameter['X-Line-Ending'] = String(xLineEnding);
             }
 
 
@@ -2819,12 +2919,28 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File (Custom)
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        validateFile: async (fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        validateFile: async (fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, validateOpts?: ValidateOpts, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'fileID' is not null or undefined
             assertParamExists('validateFile', 'fileID', fileID)
             const localVarPath = `/files/{fileID}/validate`
@@ -2839,6 +2955,70 @@ export const ACHFilesApiAxiosParamCreator = function (configuration?: Configurat
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (skipAll !== undefined) {
+                localVarQueryParameter['skipAll'] = skipAll;
+            }
+
+            if (requireABAOrigin !== undefined) {
+                localVarQueryParameter['requireABAOrigin'] = requireABAOrigin;
+            }
+
+            if (bypassOriginValidation !== undefined) {
+                localVarQueryParameter['bypassOriginValidation'] = bypassOriginValidation;
+            }
+
+            if (bypassDestinationValidation !== undefined) {
+                localVarQueryParameter['bypassDestinationValidation'] = bypassDestinationValidation;
+            }
+
+            if (customTraceNumbers !== undefined) {
+                localVarQueryParameter['customTraceNumbers'] = customTraceNumbers;
+            }
+
+            if (allowZeroBatches !== undefined) {
+                localVarQueryParameter['allowZeroBatches'] = allowZeroBatches;
+            }
+
+            if (allowMissingFileHeader !== undefined) {
+                localVarQueryParameter['allowMissingFileHeader'] = allowMissingFileHeader;
+            }
+
+            if (allowMissingFileControl !== undefined) {
+                localVarQueryParameter['allowMissingFileControl'] = allowMissingFileControl;
+            }
+
+            if (bypassCompanyIdentificationMatch !== undefined) {
+                localVarQueryParameter['bypassCompanyIdentificationMatch'] = bypassCompanyIdentificationMatch;
+            }
+
+            if (customReturnCodes !== undefined) {
+                localVarQueryParameter['customReturnCodes'] = customReturnCodes;
+            }
+
+            if (unequalServiceClassCode !== undefined) {
+                localVarQueryParameter['unequalServiceClassCode'] = unequalServiceClassCode;
+            }
+
+            if (allowUnorderedBatchNumbers !== undefined) {
+                localVarQueryParameter['allowUnorderedBatchNumbers'] = allowUnorderedBatchNumbers;
+            }
+
+            if (allowInvalidCheckDigit !== undefined) {
+                localVarQueryParameter['allowInvalidCheckDigit'] = allowInvalidCheckDigit;
+            }
+
+            if (unequalAddendaCounts !== undefined) {
+                localVarQueryParameter['unequalAddendaCounts'] = unequalAddendaCounts;
+            }
+
+            if (preserveSpaces !== undefined) {
+                localVarQueryParameter['preserveSpaces'] = preserveSpaces;
+            }
+
+            if (allowInvalidAmounts !== undefined) {
+                localVarQueryParameter['allowInvalidAmounts'] = allowInvalidAmounts;
+            }
 
             if (xRequestID != null) {
                 localVarHeaderParameter['X-Request-ID'] = String(xRequestID);
@@ -2897,12 +3077,28 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async checkFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.checkFile(fileID, xRequestID, options);
+        async checkFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.checkFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2914,7 +3110,9 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
          * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
@@ -2923,6 +3121,7 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
@@ -2930,8 +3129,8 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options);
+        async createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestination?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateFileResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassOriginValidation, bypassDestination, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3013,11 +3212,12 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * @summary Get File Contents
          * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {'LF' | 'CRLF'} [xLineEnding] Optional Line Ending allows application developer to alter line ending of the file data returned. Supported choices are LF (Line Feed) and CRLF (Carriage Return Line Feed).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFileContents(fileID: string, xRequestID?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileContents(fileID, xRequestID, options);
+        async getFileContents(fileID: string, xRequestID?: string, xLineEnding?: 'LF' | 'CRLF', options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFileContents(fileID, xRequestID, xLineEnding, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3070,13 +3270,29 @@ export const ACHFilesApiFp = function(configuration?: Configuration) {
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File (Custom)
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.validateFile(fileID, xRequestID, validateOpts, options);
+        async validateFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, validateOpts, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -3116,12 +3332,28 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        checkFile(fileID: string, xRequestID?: string, options?: any): AxiosPromise<Error> {
-            return localVarFp.checkFile(fileID, xRequestID, options).then((request) => request(axios, basePath));
+        checkFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, options?: any): AxiosPromise<Error> {
+            return localVarFp.checkFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, options).then((request) => request(axios, basePath));
         },
         /**
          * Create a new File object from either the plaintext or JSON representation.
@@ -3132,7 +3364,9 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
          * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
          * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
@@ -3141,6 +3375,7 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
          * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
          * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
          * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
          * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
@@ -3148,8 +3383,8 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
-            return localVarFp.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(axios, basePath));
+        createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestination?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: any): AxiosPromise<CreateFileResponse> {
+            return localVarFp.createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassOriginValidation, bypassDestination, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(axios, basePath));
         },
         /**
          * Permanently deletes a File and associated Batches. It cannot be undone.
@@ -3224,11 +3459,12 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * @summary Get File Contents
          * @param {string} fileID File ID
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+         * @param {'LF' | 'CRLF'} [xLineEnding] Optional Line Ending allows application developer to alter line ending of the file data returned. Supported choices are LF (Line Feed) and CRLF (Carriage Return Line Feed).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFileContents(fileID: string, xRequestID?: string, options?: any): AxiosPromise<string> {
-            return localVarFp.getFileContents(fileID, xRequestID, options).then((request) => request(axios, basePath));
+        getFileContents(fileID: string, xRequestID?: string, xLineEnding?: 'LF' | 'CRLF', options?: any): AxiosPromise<string> {
+            return localVarFp.getFileContents(fileID, xRequestID, xLineEnding, options).then((request) => request(axios, basePath));
         },
         /**
          * List all ACH Files created with the ACH service. These Files are not persisted through multiple runs of the service.
@@ -3276,13 +3512,29 @@ export const ACHFilesApiFactory = function (configuration?: Configuration, baseP
          * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
          * @summary Validate File (Custom)
          * @param {string} fileID File ID
+         * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+         * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+         * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+         * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+         * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+         * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+         * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+         * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
          * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
          * @param {ValidateOpts} [validateOpts] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: any): AxiosPromise<Error> {
-            return localVarFp.validateFile(fileID, xRequestID, validateOpts, options).then((request) => request(axios, basePath));
+        validateFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, validateOpts?: ValidateOpts, options?: any): AxiosPromise<Error> {
+            return localVarFp.validateFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, validateOpts, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3325,13 +3577,29 @@ export class ACHFilesApi extends BaseAPI {
      * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
      * @summary Validate File
      * @param {string} fileID File ID
+     * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+     * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+     * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+     * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+     * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+     * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public checkFile(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).checkFile(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
+    public checkFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).checkFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3343,7 +3611,9 @@ export class ACHFilesApi extends BaseAPI {
      * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
      * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
      * @param {boolean} [bypassOrigin] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
      * @param {boolean} [bypassDestination] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
@@ -3352,6 +3622,7 @@ export class ACHFilesApi extends BaseAPI {
      * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
      * @param {boolean} [unorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+     * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
      * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
      * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
      * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
@@ -3360,8 +3631,8 @@ export class ACHFilesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassDestination?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassDestination, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(this.axios, this.basePath));
+    public createFile(fileID: string, body: string, xRequestID?: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestination?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, unorderedBatchNumbers?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).createFile(fileID, body, xRequestID, skipAll, requireABAOrigin, bypassOrigin, bypassOriginValidation, bypassDestination, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, unorderedBatchNumbers, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3449,12 +3720,13 @@ export class ACHFilesApi extends BaseAPI {
      * @summary Get File Contents
      * @param {string} fileID File ID
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
+     * @param {'LF' | 'CRLF'} [xLineEnding] Optional Line Ending allows application developer to alter line ending of the file data returned. Supported choices are LF (Line Feed) and CRLF (Carriage Return Line Feed).
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public getFileContents(fileID: string, xRequestID?: string, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).getFileContents(fileID, xRequestID, options).then((request) => request(this.axios, this.basePath));
+    public getFileContents(fileID: string, xRequestID?: string, xLineEnding?: 'LF' | 'CRLF', options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).getFileContents(fileID, xRequestID, xLineEnding, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3511,14 +3783,30 @@ export class ACHFilesApi extends BaseAPI {
      * Validates the existing File. You need only supply the unique File identifier that was returned upon creation.
      * @summary Validate File (Custom)
      * @param {string} fileID File ID
+     * @param {boolean} [skipAll] Optional parameter to disable all validation checks for a File
+     * @param {boolean} [requireABAOrigin] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassOriginValidation] Optional parameter to configure ImmediateOrigin validation
+     * @param {boolean} [bypassDestinationValidation] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customTraceNumbers] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowZeroBatches] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileHeader] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowMissingFileControl] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [bypassCompanyIdentificationMatch] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [customReturnCodes] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [unequalServiceClassCode] Optional parameter to configure ImmediateDestination validation
+     * @param {boolean} [allowUnorderedBatchNumbers] Allow a file to be read with unordered batch numbers.
+     * @param {boolean} [allowInvalidCheckDigit] Allow the CheckDigit field in EntryDetail to differ from the expected calculation
+     * @param {boolean} [unequalAddendaCounts] Optional parameter to configure UnequalAddendaCounts validation
+     * @param {boolean} [preserveSpaces] Optional parameter to save all padding spaces
+     * @param {boolean} [allowInvalidAmounts] Optional parameter to save all padding spaces
      * @param {string} [xRequestID] Optional Request ID allows application developer to trace requests through the system\&#39;s logs
      * @param {ValidateOpts} [validateOpts] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ACHFilesApi
      */
-    public validateFile(fileID: string, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig) {
-        return ACHFilesApiFp(this.configuration).validateFile(fileID, xRequestID, validateOpts, options).then((request) => request(this.axios, this.basePath));
+    public validateFile(fileID: string, skipAll?: boolean, requireABAOrigin?: boolean, bypassOriginValidation?: boolean, bypassDestinationValidation?: boolean, customTraceNumbers?: boolean, allowZeroBatches?: boolean, allowMissingFileHeader?: boolean, allowMissingFileControl?: boolean, bypassCompanyIdentificationMatch?: boolean, customReturnCodes?: boolean, unequalServiceClassCode?: boolean, allowUnorderedBatchNumbers?: boolean, allowInvalidCheckDigit?: boolean, unequalAddendaCounts?: boolean, preserveSpaces?: boolean, allowInvalidAmounts?: boolean, xRequestID?: string, validateOpts?: ValidateOpts, options?: AxiosRequestConfig) {
+        return ACHFilesApiFp(this.configuration).validateFile(fileID, skipAll, requireABAOrigin, bypassOriginValidation, bypassDestinationValidation, customTraceNumbers, allowZeroBatches, allowMissingFileHeader, allowMissingFileControl, bypassCompanyIdentificationMatch, customReturnCodes, unequalServiceClassCode, allowUnorderedBatchNumbers, allowInvalidCheckDigit, unequalAddendaCounts, preserveSpaces, allowInvalidAmounts, xRequestID, validateOpts, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
