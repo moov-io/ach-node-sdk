@@ -1945,6 +1945,12 @@ export interface ModelFile {
      * @memberof ModelFile
      */
     'fileADVControl'?: ADVFileControl;
+    /**
+     * 
+     * @type {ValidateOpts}
+     * @memberof ModelFile
+     */
+    'validateOpts'?: ValidateOpts;
 }
 /**
  * 
