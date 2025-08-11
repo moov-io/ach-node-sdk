@@ -20,7 +20,7 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "typedoc": "0.28.9",
+    "typedoc": "0.28.10",
     "typescript": "5.9.2"
   }
 }
