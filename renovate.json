@@ -30,6 +30,13 @@
       ],
       "groupName": "docker major",
       "automerge": false
+    },
+    {
+      "description": "typedoc 0.28.x peers typescript 5.x or 6.0.x only",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "allowedVersions": "<7.0.0"
     }
   ],
   "platformAutomerge": true
