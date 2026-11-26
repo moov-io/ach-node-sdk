@@ -1,8 +1,9 @@
 # Use https://app.stepsecurity.io/ to improve workflow security
 #
 # This workflow publishes the package to npm when a GitHub release is published,
-# or when you run it by hand. It does not run the publish step until the
-# repository secret NPM_TOKEN is set.
+# or when you run it by hand. It uses npm trusted publishing (OIDC). Configure
+# a GitHub Actions trusted publisher for ach-node-sdk on npmjs.com before the
+# first publish. An NPM_TOKEN secret is not required.
 name: publish
 
 on:
@@ -14,10 +15,10 @@ permissions: {}
 
 jobs:
   publish:
-    if: ${{ secrets.NPM_TOKEN != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -29,6 +30,7 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
 
       - name: Install and test
         run: |
@@ -36,6 +38,4 @@ jobs:
           npm test
 
       - name: Publish to npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
