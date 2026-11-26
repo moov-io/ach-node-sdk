@@ -6,7 +6,9 @@
     "outDir": "dist/",
     "rootDir": ".",
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": [
     "*"
