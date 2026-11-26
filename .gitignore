@@ -4,3 +4,5 @@ typings
 dist
 openapi-generator-cli-*.jar
 /openapi.yaml
+.tsbuildinfo
+*.tsbuildinfo

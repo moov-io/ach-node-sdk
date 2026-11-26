@@ -1,0 +1,55 @@
+# Use https://app.stepsecurity.io/ to improve workflow security
+name: test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  test:
+    name: Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 22, 24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install and test
+        run: |
+          npm ci
+          npm test
+
+      - name: Check published files
+        run: |
+          npm pack --dry-run --json > pack.json
+          python3 - <<'PY'
+          import json, sys
+          data = json.load(open("pack.json"))
+          files = [f["path"] for f in data[0]["files"]]
+          banned = [p for p in files if p.endswith(".jar") or p.startswith("openapi-generator") or p == "makefile" or p.startswith("docs/") or p.startswith("test/")]
+          if banned:
+              print("unexpected files in the package:", banned)
+              sys.exit(1)
+          if "dist/index.js" not in files:
+              print("dist/index.js is missing from the package")
+              sys.exit(1)
+          print("ok:", len(files), "files")
+          PY
